@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Transaction · Trading EST{% endblock %}
+{% block header_title %}Transaction{% endblock %}
+
+{% block content %}
+<div class="te-page-heading-row">
+  <h1>Transaction</h1>
+  <div class="d-flex flex-wrap gap-2">
+    {% if user.role == 'admin' or user.role == 'accountant' %}
+    <a class="btn te-btn-gradient" href="{% url 'transactions:edit' transaction.pk %}">Edit</a>
+    <a class="btn te-btn-danger" href="{% url 'transactions:delete' transaction.pk %}">Delete</a>
+    {% endif %}
+    <a class="btn te-btn-secondary" href="{% url 'transactions:list' %}">Back</a>
+  </div>
+</div>
+
+<dl class="row te-dl-card">
+  <dt class="col-sm-3">Date</dt><dd class="col-sm-9">{{ transaction.date }}</dd>
+  <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ transaction.description }}</dd>
+  <dt class="col-sm-3">Type</dt><dd class="col-sm-9">{% include "partials/flow_badge.html" with flow=transaction.flow_type %}</dd>
+  <dt class="col-sm-3">Amount (excl. VAT)</dt><dd class="col-sm-9">{{ transaction.amount_excl_vat }}</dd>
+  <dt class="col-sm-3">Account</dt><dd class="col-sm-9">{{ transaction.account }}</dd>
+  <dt class="col-sm-3">Category</dt><dd class="col-sm-9">{{ transaction.category }}</dd>
+  <dt class="col-sm-3">Project</dt><dd class="col-sm-9">{% if transaction.project %}{{ transaction.project.name }}{% else %}—{% endif %}</dd>
+  <dt class="col-sm-3">Material item</dt><dd class="col-sm-9">{{ transaction.material_item|default:"—" }}</dd>
+  <dt class="col-sm-3">Tax %</dt><dd class="col-sm-9">{{ transaction.tax_percent|default:"—" }}</dd>
+  <dt class="col-sm-3">Tax amount</dt><dd class="col-sm-9">{{ transaction.tax_amount|default:"—" }}</dd>
+  <dt class="col-sm-3">Total amount</dt><dd class="col-sm-9">{{ transaction.total_amount|default:"—" }}</dd>
+  <dt class="col-sm-3">Payment status</dt><dd class="col-sm-9">{% include "partials/payment_badge.html" with status=transaction.payment_status %}</dd>
+  <dt class="col-sm-3">Party</dt><dd class="col-sm-9">{{ transaction.party_name }} / {{ transaction.party_type|default:"—" }}</dd>
+  <dt class="col-sm-3">Notes</dt><dd class="col-sm-9">{{ transaction.notes|default:"—" }}</dd>
+</dl>
+{% endblock %}

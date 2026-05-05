@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Tax report · Trading EST{% endblock %}
+{% block header_title %}Tax report{% endblock %}
+
+{% block content %}
+<form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
+  <div class="col-12 col-md-auto">
+    <label class="form-label small mb-0 text-muted fw-semibold">Month</label>
+    <input class="form-control" type="number" name="month" min="1" max="12" value="{{ month }}">
+  </div>
+  <div class="col-12 col-md-auto">
+    <label class="form-label small mb-0 text-muted fw-semibold">Year</label>
+    <input class="form-control" type="number" name="year" value="{{ year }}">
+  </div>
+  <div class="col-12 col-md-auto"><button type="submit" class="btn te-btn-gradient w-100 w-md-auto">Run</button></div>
+</form>
+
+{% if not report_ready %}
+<div class="alert alert-info">{{ report_message }}</div>
+{% else %}
+<div class="te-table-card te-page-card--flush">
+  <div class="table-responsive">
+    <table class="table mb-0 align-middle">
+      <tbody>
+        <tr><th style="width: 40%">Total sales (excl. VAT) — Client IN with Paid</th><td>{{ report.total_sales_excl_vat }}</td></tr>
+        <tr><th>Output VAT</th><td>{{ report.output_vat }}</td></tr>
+        <tr><th>Total purchases (excl.) — Cash OUT</th><td>{{ report.total_purchases_excl_vat }}</td></tr>
+        <tr><th>Input VAT</th><td>{{ report.input_vat }}</td></tr>
+        <tr class="te-row-emphasis"><th>Net VAT payable</th><td><strong>{% if report.net_vat_payable is None %}—{% else %}{{ report.net_vat_payable }}{% endif %}</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="text-muted small mt-3 mb-0">Matches workbook Tax Report logic (paid client sales vs cash purchases in period).</p>
+{% endif %}
+{% endblock %}

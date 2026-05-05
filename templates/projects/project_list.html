@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Projects · Trading EST{% endblock %}
+{% block header_title %}Projects{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning">⚠️ Net Profit = Contract (excl. VAT) − Total Expense (incl. VAT) — mixed basis as per source workbook</div>
+<div class="te-page-heading-row">
+  <h1>Projects</h1>
+  {% if user.role == 'admin' or user.role == 'accountant' %}
+  <a class="btn te-btn-gradient" href="{% url 'projects:add' %}"><i class="bi bi-plus-lg me-1"></i> New project</a>
+  {% endif %}
+</div>
+
+{% if projects %}
+<div class="te-table-card">
+  <div class="table-responsive">
+    <table class="table table-sm mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Project</th><th>Client</th><th>Contract excl.</th><th>VAT 15%</th><th>Incl.</th><th>Advance 50%</th>
+          <th>Income (Paid)</th><th>Expense</th><th>Net profit*</th><th>Remaining**</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td class="fw-medium">{{ p.name }}</td>
+          <td>{{ p.client_name }}</td>
+          <td>{{ p.contract_value_excl_vat|default:"—" }}</td>
+          <td>{{ p.vat_15|default:"—" }}</td>
+          <td>{{ p.contract_incl_vat|default:"—" }}</td>
+          <td>{{ p.required_advance_50_incl_vat|default:"—" }}</td>
+          <td>{{ p.total_income_paid|default:"0" }}</td>
+          <td>{{ p.total_expense|default:"0" }}</td>
+          <td>{{ p.net_profit_line|default:"—" }}</td>
+          <td>{{ p.remaining_display|default:"—" }}</td>
+          <td><a class="btn btn-sm te-btn-secondary" href="{% url 'projects:detail' p.pk %}">Detail</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="text-muted small mt-3 mb-0">* Contract excl. VAT − total expense (mixed basis per workbook). ** Contract incl. − paid income (Total Amount).</p>
+{% else %}
+<div class="te-page-card te-empty-state">
+  <i class="bi bi-kanban" aria-hidden="true"></i>
+  <p>No projects yet. {% if user.role == 'admin' or user.role == 'accountant' %}Create one to get started.{% endif %}</p>
+</div>
+{% endif %}
+{% endblock %}

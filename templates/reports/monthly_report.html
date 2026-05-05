@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Monthly report · Trading EST{% endblock %}
+{% block header_title %}Monthly report{% endblock %}
+
+{% block content %}
+<p class="text-muted small mb-4">Cash basis · expense breakdown</p>
+
+<form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
+  <div class="col-12 col-md-auto">
+    <label class="form-label small mb-0 text-muted fw-semibold">Month</label>
+    <input class="form-control" type="number" name="month" min="1" max="12" value="{{ month }}">
+  </div>
+  <div class="col-12 col-md-auto">
+    <label class="form-label small mb-0 text-muted fw-semibold">Year</label>
+    <input class="form-control" type="number" name="year" value="{{ year }}">
+  </div>
+  <div class="col-12 col-md-auto"><button type="submit" class="btn te-btn-gradient w-100 w-md-auto">Run</button></div>
+</form>
+
+{% if not report_ready %}
+<div class="alert alert-info">{{ report_message }}</div>
+{% else %}
+<div class="te-table-card te-page-card--flush mb-4">
+  <div class="table-responsive">
+    <table class="table mb-0 align-middle">
+      <tbody>
+        <tr><th style="width: 45%">Total income (excl.) — Cash IN</th><td>{{ report.total_income_excl_vat }}</td></tr>
+        <tr><th>Total expense (excl.) — Cash OUT</th><td>{{ report.total_expense_excl_vat }}</td></tr>
+        <tr class="te-row-emphasis"><th>Net profit / loss</th><td><strong>{{ report.net_profit_loss }}</strong></td></tr>
+        <tr><th>Credit sale — IN via Accounts Receivable</th><td>{{ report.credit_sale }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<h2 class="h6 text-muted text-uppercase fw-bold mb-3">Expense breakdown (Cash OUT)</h2>
+<div class="te-table-card te-page-card--flush">
+  <div class="table-responsive">
+    <table class="table table-sm mb-0 align-middle">
+      <thead><tr><th>Category</th><th>Amount (excl.)</th></tr></thead>
+      <tbody>
+        <tr><td>Material Purchase</td><td>{{ report.material_expense }}</td></tr>
+        <tr><td>Food Expense</td><td>{{ report.food_expense }}</td></tr>
+        <tr><td>Fuel Expense</td><td>{{ report.fuel_expense }}</td></tr>
+        <tr><td>Labour Expense</td><td>{{ report.labour_expense }}</td></tr>
+        <tr><td>Transport Expense</td><td>{{ report.transport_expense }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

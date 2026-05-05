@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit{% else %}New{% endif %} transaction · Trading EST{% endblock %}
+{% block header_title %}{% if object %}Edit transaction{% else %}New transaction{% endif %}{% endblock %}
+
+{% block content %}
+<div class="te-page-card mx-auto" style="max-width: 900px;">
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+    <div class="row g-3">
+      {% for field in form %}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold small text-muted" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <p class="text-muted small mt-2 mb-0">Tax amount and total are calculated on save (Business-Logic rules).</p>
+    <div class="mt-4 te-form-actions d-grid d-sm-flex flex-wrap gap-2">
+      <button type="submit" class="btn te-btn-gradient">Save</button>
+      <a href="{% if object %}{% url 'transactions:detail' object.pk %}{% else %}{% url 'transactions:list' %}{% endif %}" class="btn te-btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} · Trading EST{% endblock %}
+{% block header_title %}{{ project.name }}{% endblock %}
+
+{% block content %}
+<div class="alert alert-warning border-0 shadow-sm mb-4" style="border-radius: 12px;">⚠️ Net Profit = Contract (excl. VAT) − Total Expense (incl. VAT) — mixed basis as per source workbook</div>
+<div class="te-page-heading-row">
+  <h1>{{ project.name }}</h1>
+  <div class="d-flex flex-wrap gap-2">
+    {% if user.role == 'admin' or user.role == 'accountant' %}
+    <a class="btn te-btn-gradient" href="{% url 'projects:edit' project.pk %}">Edit</a>
+    <a class="btn te-btn-danger" href="{% url 'projects:delete' project.pk %}">Delete</a>
+    {% endif %}
+    <a class="btn te-btn-secondary" href="{% url 'projects:list' %}">Back</a>
+  </div>
+</div>
+
+<dl class="row te-dl-card mb-4">
+  <dt class="col-sm-3">Client</dt><dd class="col-sm-9">{{ project.client_name }}</dd>
+  <dt class="col-sm-3">Contract (excl.)</dt><dd class="col-sm-9">{{ project.contract_value_excl_vat|default:"—" }}</dd>
+  <dt class="col-sm-3">VAT 15%</dt><dd class="col-sm-9">{{ project.vat_15|default:"—" }}</dd>
+  <dt class="col-sm-3">Contract (incl.)</dt><dd class="col-sm-9">{{ project.contract_incl_vat|default:"—" }}</dd>
+  <dt class="col-sm-3">50% advance</dt><dd class="col-sm-9">{{ project.required_advance_50_incl_vat|default:"—" }}</dd>
+  <dt class="col-sm-3">Total income (Paid IN)</dt><dd class="col-sm-9">{{ total_income_paid }}</dd>
+  <dt class="col-sm-3">Total expense (OUT)</dt><dd class="col-sm-9">{{ total_expense }}</dd>
+  <dt class="col-sm-3">Net profit / loss</dt><dd class="col-sm-9">{{ net_profit|default:"—" }}</dd>
+  <dt class="col-sm-3">Remaining (incl. − paid income)</dt><dd class="col-sm-9">{{ remaining_display|default:"—" }}</dd>
+  <dt class="col-sm-3">Notes</dt><dd class="col-sm-9">{{ project.notes|default:"—"|linebreaks }}</dd>
+</dl>
+
+<h2 class="h6 text-muted text-uppercase fw-bold mb-3">Recent transactions</h2>
+{% if transactions %}
+<div class="te-table-card">
+  <div class="table-responsive">
+    <table class="table table-sm mb-0 align-middle">
+      <thead><tr><th>Date</th><th>Type</th><th>Excl.</th><th>Total</th><th>Category</th></tr></thead>
+      <tbody>
+        {% for t in transactions %}
+        <tr>
+          <td>{{ t.date }}</td>
+          <td>{% include "partials/flow_badge.html" with flow=t.flow_type %}</td>
+          <td>{{ t.amount_excl_vat }}</td>
+          <td>{{ t.total_amount }}</td>
+          <td>{{ t.category }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="te-page-card te-empty-state py-4">
+  <i class="bi bi-journal-x"></i>
+  <p class="mb-0">No transactions for this project.</p>
+</div>
+{% endif %}
+{% endblock %}
