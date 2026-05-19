@@ -18,38 +18,27 @@
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body class="te-auth-body">
-<div class="container-fluid te-auth-split g-0">
-  <div class="row g-0">
-    <div class="col-lg-6 te-auth-brand-panel">
-      <div class="te-auth-brand-inner">
-        {% include "partials/brand_block.html" with show_logo=True logo_large=True show_tagline=True %}
-      </div>
-    </div>
-    <div class="col-12 col-lg-6 te-auth-form-panel">
-      <div class="te-auth-mobile-brand-bar">
-        <img src="{% static 'img/logo.png' %}" alt="" class="te-auth-mobile-logo" width="36" height="36" decoding="async">
-        <div class="te-auth-mobile-brand-bar__text">
-          <span class="te-auth-mobile-brand-bar__ar" dir="rtl" lang="ar">{{ brand_name_ar }}</span>
-          <span class="te-auth-mobile-brand-bar__en">{{ brand_name_en }}</span>
-          <span class="te-auth-mobile-brand-bar__tagline">{{ brand_tagline }}</span>
+<div class="te-auth-page{% block auth_page_class %}{% endblock %}">
+  <div class="te-auth-duo">
+    <aside class="te-auth-brand-card" aria-label="Company branding">
+      {% include "partials/auth_panel_brand.html" %}
+    </aside>
+
+    <div class="te-auth-form-card">
+      <div class="te-auth-form-card__inner">
+        {% if messages %}
+        <div class="te-auth-page__messages">
+          {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} mb-2 shadow-sm" role="alert">{{ message }}</div>
+          {% endfor %}
         </div>
-      </div>
-      {% if messages %}
-      <div class="px-3 pt-3 pt-lg-0">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} mb-2 shadow-sm" role="alert">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-      <div class="te-auth-form-panel__center pb-4">
-        <div class="w-100" style="max-width: 420px;">
-          <div class="te-auth-form-card">
-            {% block auth_card %}{% endblock %}
-          </div>
-          <p class="te-auth-switch mb-0">
-            {% block auth_switch %}{% endblock %}
-          </p>
-        </div>
+        {% endif %}
+
+        {% block auth_card %}{% endblock %}
+
+        <p class="te-auth-switch mb-0">
+          {% block auth_switch %}{% endblock %}
+        </p>
       </div>
     </div>
   </div>

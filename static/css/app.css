@@ -64,6 +64,17 @@ body.te-auth-body {
 
 body.te-auth-body {
   background: var(--te-bg);
+  height: 100vh;
+  overflow: hidden;
+}
+
+@media (max-width: 991.98px) {
+  body.te-auth-body {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
 }
 
 .te-content-wrap {
@@ -527,29 +538,124 @@ body.te-sidebar-open .te-sidebar-backdrop {
   }
 }
 
-/* ========== Auth ========== */
-.te-auth-split {
+/* ========== Auth (login + signup) ========== */
+.te-auth-page {
+  width: 100%;
+  height: 100vh;
   min-height: 100vh;
-}
-
-.te-auth-brand-panel {
-  background: var(--te-gradient-brand-deep);
-  position: relative;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  padding: 3rem;
-  color: #fff;
+  background: var(--te-bg);
 }
 
-@media (min-width: 992px) {
-  .te-auth-brand-panel {
-    display: flex;
+.te-auth-page__messages {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.te-auth-duo {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+}
+
+@media (max-width: 991.98px) {
+  .te-auth-page {
+    height: auto;
+    min-height: 100vh;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .te-auth-duo {
+    height: auto;
+    min-height: 100vh;
   }
 }
 
-.te-auth-brand-panel::before {
+@media (min-width: 992px) {
+  .te-auth-duo {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+}
+
+.te-auth-brand-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 50vh;
+  margin: 0;
+  padding: 0.75rem 1.5rem 1.5rem 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--te-gradient-brand-deep);
+  color: #fff;
+  text-align: center;
+}
+
+.te-auth-form-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 50vh;
+  margin: 0;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: var(--te-bg);
+}
+
+@media (min-width: 992px) {
+  .te-auth-brand-card,
+  .te-auth-form-card {
+    flex: 0 0 50%;
+    width: 50%;
+    max-width: 50%;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+  }
+
+  .te-auth-brand-card {
+    padding: 0.75rem 2rem 2rem 0;
+  }
+
+  .te-auth-form-card {
+    padding: 2rem;
+  }
+}
+
+.te-auth-form-card__inner {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 2rem 2rem 1.75rem;
+  background: var(--te-card);
+  border: 1px solid #e2e8f0;
+  border-radius: var(--te-radius-xl);
+  box-shadow: var(--te-shadow-lg);
+  box-sizing: border-box;
+}
+
+.te-auth-brand-card::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -562,10 +668,71 @@ body.te-sidebar-open .te-sidebar-backdrop {
   pointer-events: none;
 }
 
-.te-auth-brand-inner {
+.te-auth-panel-brand {
   position: relative;
   z-index: 1;
-  max-width: 420px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  align-self: stretch;
+  text-align: center;
+  gap: 0.7rem;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.te-auth-panel-brand__logo {
+  width: 400px;
+  height: 400px;
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+  margin-inline: auto;
+  margin-top: 0;
+  margin-bottom: 0.15rem;
+}
+
+.te-auth-panel-brand__ar,
+.te-auth-panel-brand__en,
+.te-auth-panel-brand__tagline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  margin: 0;
+  align-self: center;
+}
+
+.te-auth-panel-brand__ar {
+  font-family: "Noto Sans Arabic", "Inter", system-ui, sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: #fff;
+  direction: rtl;
+}
+
+.te-auth-panel-brand__en {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.te-auth-panel-brand__tagline {
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Company brand block (logo + Arabic first, English second) */
@@ -635,21 +802,6 @@ body.te-sidebar-open .te-sidebar-backdrop {
   max-width: 28rem;
 }
 
-.te-auth-brand-panel .te-brand-block__ar {
-  font-size: 1.5rem;
-}
-
-.te-auth-brand-panel .te-brand-block__en {
-  font-size: 1.15rem;
-}
-
-.te-auth-brand-panel .te-brand-block,
-.te-auth-brand-panel .te-brand-block__ar,
-.te-auth-brand-panel .te-brand-block__en,
-.te-auth-brand-panel .te-brand-block__tagline {
-  color: #fff;
-}
-
 .te-brand-block--compact {
   gap: 0.15rem;
 }
@@ -665,78 +817,6 @@ body.te-sidebar-open .te-sidebar-backdrop {
   font-weight: 700;
   letter-spacing: 0.01em;
   line-height: 1.25;
-}
-
-.te-auth-mobile-brand-bar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-  line-height: 1.25;
-}
-
-.te-auth-mobile-brand-bar__text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
-  min-width: 0;
-  text-align: start;
-}
-
-.te-auth-mobile-logo {
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.te-auth-mobile-brand-bar__ar {
-  font-family: "Noto Sans Arabic", "Inter", system-ui, sans-serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.te-auth-mobile-brand-bar__en {
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  opacity: 0.95;
-}
-
-.te-auth-mobile-brand-bar__tagline {
-  font-size: 0.65rem;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.85);
-  line-height: 1.25;
-}
-
-.te-auth-form-panel {
-  background: var(--te-bg);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-  padding: 0;
-  min-height: 100vh;
-}
-
-.te-auth-form-panel__center {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.25rem;
-  width: 100%;
-}
-
-.te-auth-form-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--te-card);
-  border-radius: var(--te-radius-xl);
-  box-shadow: var(--te-shadow-lg);
-  border: 1px solid #e2e8f0;
-  padding: 2rem 2rem 1.75rem;
 }
 
 .te-auth-form-card h2 {
@@ -775,9 +855,10 @@ body.te-sidebar-open .te-sidebar-backdrop {
 
 .te-auth-switch {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
   font-size: 0.9rem;
   color: var(--te-muted);
+  width: 100%;
 }
 
 .te-auth-switch a {
@@ -786,17 +867,46 @@ body.te-sidebar-open .te-sidebar-backdrop {
   text-decoration: none;
 }
 
-.te-auth-mobile-brand-bar {
-  background: var(--te-primary);
-  color: #fff;
-  padding: 0.85rem 1rem;
-  text-align: center;
+/* Login page only — signup layout unchanged */
+.te-auth-page--login.te-auth-page,
+.te-auth-page--login .te-auth-duo {
+  height: 100vh;
+  min-height: 100vh;
 }
 
 @media (min-width: 992px) {
-  .te-auth-mobile-brand-bar {
-    display: none;
+  .te-auth-page--login .te-auth-brand-card,
+  .te-auth-page--login .te-auth-form-card {
+    flex: 0 0 50%;
+    width: 50%;
+    max-width: 50%;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
   }
+
+  .te-auth-page--login .te-auth-brand-card {
+    margin: 0;
+    padding: 0.75rem 2rem 2rem 0;
+  }
+}
+
+.te-auth-page--login .te-auth-panel-brand__logo {
+  width: 300px;
+  height: 300px;
+  max-height: 300px;
+}
+
+.te-auth-page--login .te-auth-brand-card {
+  justify-content: center;
+  align-items: center;
+}
+
+.te-auth-page--login .te-auth-panel-brand {
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  height: auto;
 }
 
 /* ========== Dashboard KPI ========== */
