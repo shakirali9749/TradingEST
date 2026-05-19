@@ -892,9 +892,9 @@ body.te-sidebar-open .te-sidebar-backdrop {
 }
 
 .te-auth-page--login .te-auth-panel-brand__logo {
-  width: 300px;
-  height: 300px;
-  max-height: 300px;
+  width: 340px;
+  height: 340px;
+  max-height: 340px;
 }
 
 .te-auth-page--login .te-auth-brand-card {
