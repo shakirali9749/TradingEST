@@ -1,36 +1,175 @@
 {% extends "base.html" %}
-{% block title %}Tax report · Trading EST{% endblock %}
+{% block title %}Tax report · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Tax report{% endblock %}
 
 {% block content %}
-<form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
-  <div class="col-12 col-md-auto">
-    <label class="form-label small mb-0 text-muted fw-semibold">Month</label>
-    <input class="form-control" type="number" name="month" min="1" max="12" value="{{ month }}">
+<form method="get" class="te-toolbar te-tax-filter" id="teTaxReportForm">
+  <div class="row g-4">
+    <div class="col-12 col-lg-5">
+      <div class="te-tax-filter__section">
+        <div class="te-tax-filter__label">
+          <i class="bi bi-calendar-event" aria-hidden="true"></i>
+          Report ends on
+        </div>
+        <div class="te-tax-date-group">
+          <select class="form-select" name="month" id="teTaxMonth" aria-label="End month">
+            {% for num, name in calendar_months %}
+            <option value="{{ num }}" {% if month == num %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+          <select class="form-select" name="year" id="teTaxYear" aria-label="End year">
+            {% for y in year_choices %}
+            <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="te-tax-filter__section">
+        <div class="te-tax-filter__label">
+          <i class="bi bi-hourglass-split" aria-hidden="true"></i>
+          How many months?
+        </div>
+        <div class="te-tax-period-pills" role="group" aria-label="Report period length">
+          {% for n, label, hint in period_options %}
+          <div>
+            <input type="radio" name="months" id="tePeriod{{ n }}" value="{{ n }}" {% if months == n %}checked{% endif %}>
+            <label class="te-tax-period-pill" for="tePeriod{{ n }}">
+              <strong>{{ label }}</strong>
+              <small>{{ hint }}</small>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7">
+      <div class="te-tax-filter__section h-100 d-flex flex-column">
+        <div class="te-tax-filter__label">
+          <i class="bi bi-eye" aria-hidden="true"></i>
+          Preview
+        </div>
+        <div class="te-tax-preview flex-grow-1" id="teTaxPreview" aria-live="polite">
+          <div class="te-tax-preview__title">Months included in this report</div>
+          <div class="te-tax-preview__range" id="teTaxPreviewRange"></div>
+          <div class="te-tax-preview__chips" id="teTaxPreviewChips"></div>
+        </div>
+        <div class="te-tax-filter__actions mt-3">
+          <button type="submit" class="btn te-btn-gradient">
+            <i class="bi bi-play-fill me-1" aria-hidden="true"></i>
+            Generate Report
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="col-12 col-md-auto">
-    <label class="form-label small mb-0 text-muted fw-semibold">Year</label>
-    <input class="form-control" type="number" name="year" value="{{ year }}">
-  </div>
-  <div class="col-12 col-md-auto"><button type="submit" class="btn te-btn-gradient w-100 w-md-auto">Run</button></div>
 </form>
 
-{% if not report_ready %}
-<div class="alert alert-info">{{ report_message }}</div>
-{% else %}
+<div class="te-page-heading-row mb-3">
+  <div>
+    <h1 class="h5 mb-1">VAT summary</h1>
+    <p class="text-muted small mb-0">{{ report.period_label }} · {{ report.months_count }} month{{ report.months_count|pluralize }}</p>
+  </div>
+</div>
+
 <div class="te-table-card te-page-card--flush">
   <div class="table-responsive">
-    <table class="table mb-0 align-middle">
+    <table class="table table-sm mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Month</th>
+          <th class="text-end">Sales (excl. VAT)</th>
+          <th class="text-end">Output VAT</th>
+          <th class="text-end">Purchases (excl.)</th>
+          <th class="text-end">Input VAT</th>
+          <th class="text-end">Net VAT payable</th>
+        </tr>
+      </thead>
       <tbody>
-        <tr><th style="width: 40%">Total sales (excl. VAT) — Client IN with Paid</th><td>{{ report.total_sales_excl_vat }}</td></tr>
-        <tr><th>Output VAT</th><td>{{ report.output_vat }}</td></tr>
-        <tr><th>Total purchases (excl.) — Cash OUT</th><td>{{ report.total_purchases_excl_vat }}</td></tr>
-        <tr><th>Input VAT</th><td>{{ report.input_vat }}</td></tr>
-        <tr class="te-row-emphasis"><th>Net VAT payable</th><td><strong>{% if report.net_vat_payable is None %}—{% else %}{{ report.net_vat_payable }}{% endif %}</strong></td></tr>
+        {% for row in report.rows %}
+        <tr>
+          <td class="fw-medium">{{ row.month_name }}</td>
+          <td class="text-end">{{ row.total_sales_excl_vat }}</td>
+          <td class="text-end">{{ row.output_vat }}</td>
+          <td class="text-end">{{ row.total_purchases_excl_vat }}</td>
+          <td class="text-end">{{ row.input_vat }}</td>
+          <td class="text-end">{% if row.net_vat_payable is None %}—{% else %}{{ row.net_vat_payable }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+        <tr class="te-row-emphasis">
+          <td class="fw-bold">Total</td>
+          <td class="text-end fw-bold">{{ report.totals.total_sales_excl_vat }}</td>
+          <td class="text-end fw-bold">{{ report.totals.output_vat }}</td>
+          <td class="text-end fw-bold">{{ report.totals.total_purchases_excl_vat }}</td>
+          <td class="text-end fw-bold">{{ report.totals.input_vat }}</td>
+          <td class="text-end fw-bold">{% if report.totals.net_vat_payable is None %}—{% else %}{{ report.totals.net_vat_payable }}{% endif %}</td>
+        </tr>
       </tbody>
     </table>
   </div>
 </div>
-<p class="text-muted small mt-3 mb-0">Matches workbook Tax Report logic (paid client sales vs cash purchases in period).</p>
-{% endif %}
+<p class="text-muted small mt-3 mb-0">Paid client sales vs cash purchases for each month in the selected period.</p>
+
+<script>
+(function () {
+  const MONTH_NAMES = [
+    "", "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  function monthsInPeriod(endYear, endMonth, count) {
+    const out = [];
+    let y = endYear;
+    let m = endMonth;
+    for (let i = 0; i < count; i++) {
+      out.push({ y, m });
+      m -= 1;
+      if (m < 1) {
+        m = 12;
+        y -= 1;
+      }
+    }
+    out.reverse();
+    return out;
+  }
+
+  function label(y, m) {
+    return MONTH_NAMES[m] + " " + y;
+  }
+
+  function updatePreview() {
+    const monthEl = document.getElementById("teTaxMonth");
+    const yearEl = document.getElementById("teTaxYear");
+    const periodEl = document.querySelector('#teTaxReportForm input[name="months"]:checked');
+    const rangeEl = document.getElementById("teTaxPreviewRange");
+    const chipsEl = document.getElementById("teTaxPreviewChips");
+    if (!monthEl || !yearEl || !periodEl || !rangeEl || !chipsEl) return;
+
+    const endMonth = parseInt(monthEl.value, 10);
+    const endYear = parseInt(yearEl.value, 10);
+    const count = parseInt(periodEl.value, 10);
+    const months = monthsInPeriod(endYear, endMonth, count);
+    const names = months.map(({ y, m }) => label(y, m));
+
+    if (names.length === 1) {
+      rangeEl.textContent = names[0];
+    } else {
+      rangeEl.textContent = names[0] + " → " + names[names.length - 1];
+    }
+
+    chipsEl.innerHTML = names
+      .map((n) => '<span class="te-tax-preview__chip">' + n + "</span>")
+      .join("");
+  }
+
+  const form = document.getElementById("teTaxReportForm");
+  if (!form) return;
+
+  form.querySelectorAll("select, input[type=radio]").forEach((el) => {
+    el.addEventListener("change", updatePreview);
+  });
+  updatePreview();
+})();
+</script>
 {% endblock %}

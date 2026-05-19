@@ -6,6 +6,11 @@ app_name = "transactions"
 
 urlpatterns = [
     path("", views.TransactionListView.as_view(), name="list"),
+    path(
+        "ref/<str:reference_number>/",
+        views.TransactionDetailView.as_view(),
+        name="detail_by_ref",
+    ),
     path("<int:pk>/", views.TransactionDetailView.as_view(), name="detail"),
     path("add/", views.TransactionCreateView.as_view(), name="add"),
     path("<int:pk>/edit/", views.TransactionUpdateView.as_view(), name="edit"),

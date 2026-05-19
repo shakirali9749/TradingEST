@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Employees · Trading EST{% endblock %}
+{% block title %}Employees · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Employees{% endblock %}
 
 {% block content %}
@@ -19,13 +19,14 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
-          <th>Name</th><th>Type</th><th>Due</th><th>Paid</th><th>Pending</th><th>Advance bal.</th><th>Total pending</th><th></th>
+          <th>Name</th><th>Paid on</th><th>Type</th><th>Due</th><th>Paid</th><th>Pending</th><th>Advance bal.</th><th>Total pending</th><th></th>
         </tr>
       </thead>
       <tbody>
         {% for e in employees %}
         <tr>
           <td class="fw-medium">{{ e.name }}</td>
+          <td>{{ e.paid_on|default:"—" }}</td>
           <td><span class="badge rounded-pill text-bg-light border">{{ e.salary_type }}</span></td>
           <td>{{ e.salary_due_this_month }}</td>
           <td>{{ e.salary_paid_this_month|default:"—" }}</td>

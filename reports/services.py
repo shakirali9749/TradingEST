@@ -6,6 +6,7 @@ Uses ORM aggregates with Q(), Sum(), filter= on aggregate.
 
 from __future__ import annotations
 
+import calendar
 from datetime import date
 from decimal import Decimal
 
@@ -125,6 +126,26 @@ def accounts_summary_map():
     return {r["label"]: r for r in accounts_summary_rows()}
 
 
+def months_in_period(end_year: int, end_month: int, months_count: int) -> list[tuple[int, int]]:
+    """Chronological list of (year, month) ending at end_month (inclusive)."""
+    if months_count < 1:
+        months_count = 1
+    y, m = end_year, end_month
+    collected: list[tuple[int, int]] = []
+    for _ in range(months_count):
+        collected.append((y, m))
+        m -= 1
+        if m < 1:
+            m = 12
+            y -= 1
+    collected.reverse()
+    return collected
+
+
+def month_display_name(year: int, month: int) -> str:
+    return f"{calendar.month_name[month]} {year}"
+
+
 def tax_report_for_month(year: int, month: int) -> dict:
     """
     Tax Report — Business-Logic §3 Tax Report + rule 10–12.
@@ -157,11 +178,53 @@ def tax_report_for_month(year: int, month: int) -> dict:
     return {
         "year": year,
         "month": month,
+        "month_name": month_display_name(year, month),
         "total_sales_excl_vat": total_sales_excl,
         "output_vat": output_vat,
         "total_purchases_excl_vat": total_purchases_excl,
         "input_vat": input_vat,
         "net_vat_payable": net_vat,
+    }
+
+
+def tax_report_for_period(end_year: int, end_month: int, months_count: int) -> dict:
+    """Tax report for N months ending at end_year/end_month (1–12 months)."""
+    months_count = max(1, min(12, int(months_count)))
+    period_months = months_in_period(end_year, end_month, months_count)
+    rows = [tax_report_for_month(y, m) for y, m in period_months]
+
+    total_sales = sum((r["total_sales_excl_vat"] for r in rows), Decimal("0"))
+    output_vat = sum((r["output_vat"] for r in rows), Decimal("0"))
+    total_purch = sum((r["total_purchases_excl_vat"] for r in rows), Decimal("0"))
+    input_vat = sum((r["input_vat"] for r in rows), Decimal("0"))
+
+    if total_sales == Decimal("0") and total_purch == Decimal("0"):
+        net_vat = None
+    else:
+        net_vat = output_vat - input_vat
+
+    month_names = [r["month_name"] for r in rows]
+    first_name = month_names[0]
+    last_name = month_names[-1]
+    period_label = first_name if len(rows) == 1 else f"{first_name} – {last_name}"
+
+    return {
+        "end_year": end_year,
+        "end_month": end_month,
+        "months_count": months_count,
+        "period_label": period_label,
+        "month_names": month_names,
+        "month_names_line": ", ".join(month_names),
+        "rows": rows,
+        "months": rows,
+        "totals": {
+            "month_name": "Total",
+            "total_sales_excl_vat": total_sales,
+            "output_vat": output_vat,
+            "total_purchases_excl_vat": total_purch,
+            "input_vat": input_vat,
+            "net_vat_payable": net_vat,
+        },
     }
 
 

@@ -1,22 +1,17 @@
 {% extends "base.html" %}
-{% block title %}Dashboard · Trading EST{% endblock %}
+{% block title %}Dashboard · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Dashboard{% endblock %}
 
 {% block content %}
-<div class="te-page-card mb-4">
-  <p class="small mb-0" style="color: var(--te-muted);">
-    Signed in as <strong style="color: var(--te-text);">{{ user.get_role_display }}</strong>.
-    {% if not show_full_financial_dashboard %}
-    You have a <strong style="color: var(--te-text);">read-only overview</strong>; detailed financial and HR metrics are available to <strong style="color: var(--te-text);">Accountant</strong> and <strong style="color: var(--te-text);">Admin</strong>.
-    {% endif %}
-  </p>
-</div>
-
 {% if show_full_financial_dashboard %}
 <form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
   <div class="col-12 col-sm-auto">
     <label class="form-label small mb-0 text-muted fw-semibold">VAT period (month)</label>
-    <input class="form-control" type="number" name="month" min="1" max="12" value="{{ month }}">
+    <select class="form-select" name="month" aria-label="VAT period month">
+      {% for num, name in calendar_months %}
+      <option value="{{ num }}" {% if month == num %}selected{% endif %}>{{ name }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="col-12 col-sm-auto">
     <label class="form-label small mb-0 text-muted fw-semibold">Year</label>

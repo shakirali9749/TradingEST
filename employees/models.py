@@ -11,6 +11,12 @@ class SalaryType(models.TextChoices):
 
 class Employee(models.Model):
     name = models.CharField(max_length=255)
+    salary_paid_date = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Payment date",
+        help_text="Date when salary was paid to this employee.",
+    )
     salary_type = models.CharField(
         max_length=16, choices=SalaryType.choices, default=SalaryType.MONTHLY
     )

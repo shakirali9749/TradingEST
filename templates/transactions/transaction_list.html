@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Transactions · Trading EST{% endblock %}
+{% block title %}Transactions · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Transactions{% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
 <form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
   <div class="col-12 col-md-5">
     <label class="form-label small text-muted mb-1 fw-semibold">Search</label>
-    <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Description, party, notes…">
+    <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Reference #, description, party, notes…">
   </div>
   <div class="col-12 col-md-4">
     <label class="form-label small text-muted mb-1 fw-semibold">Account (exact)</label>
@@ -52,7 +52,7 @@
     <div class="card-body">
       <div class="te-tx-card__top">
         <div>
-          <div class="small text-muted">{{ t.date }}</div>
+          <div class="small text-muted"><code>{{ t.reference_number }}</code> · {{ t.date }}</div>
           <div class="mt-1">{% include "partials/flow_badge.html" with flow=t.flow_type %}</div>
         </div>
         {% include "partials/payment_badge.html" with status=t.payment_status %}
@@ -64,7 +64,7 @@
       {% if t.party_name %}<p class="small mb-1"><strong>Party</strong> {{ t.party_name }}</p>{% endif %}
       {% if t.project %}<p class="small mb-0"><strong>Project</strong> {{ t.project.name }}</p>{% endif %}
       <div class="te-tx-card__actions">
-        <a class="btn te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a>
+        <a class="btn te-btn-secondary" href="{% url 'transactions:detail_by_ref' t.reference_number %}">View</a>
         {% if user.role == 'admin' or user.role == 'accountant' %}
         <a class="btn te-btn-gradient" href="{% url 'transactions:edit' t.pk %}">Edit</a>
         <a class="btn te-btn-danger" href="{% url 'transactions:delete' t.pk %}">Delete</a>
@@ -81,6 +81,7 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
+          <th>Ref #</th>
           <th>Date</th>
           <th>Type</th>
           <th>Status</th>
@@ -97,6 +98,7 @@
       <tbody>
         {% for t in transactions %}
         <tr>
+          <td><code class="small">{{ t.reference_number }}</code></td>
           <td>{{ t.date }}</td>
           <td>{% include "partials/flow_badge.html" with flow=t.flow_type %}</td>
           <td>{% include "partials/payment_badge.html" with status=t.payment_status %}</td>
@@ -108,7 +110,7 @@
           <td>{% if t.project %}{{ t.project.name }}{% endif %}</td>
           <td>{{ t.party_name }}</td>
           <td class="text-nowrap">
-            <a class="btn btn-sm te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a>
+            <a class="btn btn-sm te-btn-secondary" href="{% url 'transactions:detail_by_ref' t.reference_number %}">View</a>
             {% if user.role == 'admin' or user.role == 'accountant' %}
             <a class="btn btn-sm te-btn-gradient" href="{% url 'transactions:edit' t.pk %}">Edit</a>
             {% endif %}

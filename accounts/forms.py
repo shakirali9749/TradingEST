@@ -23,7 +23,7 @@ class LoginForm(forms.Form):
 
 
 class SignupForm(forms.Form):
-    """Public registration — first user becomes Admin; later users become Viewer."""
+    """Public registration — new users receive Admin role."""
 
     email = forms.EmailField(
         widget=forms.EmailInput(
@@ -31,9 +31,8 @@ class SignupForm(forms.Form):
         ),
     )
     full_name = forms.CharField(
-        required=False,
         max_length=255,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Full name (optional)"}),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Full name"}),
     )
     password1 = forms.CharField(
         label="Password",
@@ -56,6 +55,12 @@ class SignupForm(forms.Form):
         if User.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError("An account with this email already exists.")
         return email
+
+    def clean_full_name(self):
+        name = (self.cleaned_data.get("full_name") or "").strip()
+        if not name:
+            raise forms.ValidationError("Full name is required.")
+        return name
 
     def clean(self):
         data = super().clean()

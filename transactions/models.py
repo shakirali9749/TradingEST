@@ -63,6 +63,12 @@ class Transaction(models.Model):
     Tax Amount / Total Amount follow Business-Logic §5 rule 1.
     """
 
+    reference_number = models.CharField(
+        max_length=64,
+        unique=True,
+        db_index=True,
+        verbose_name="Reference #",
+    )
     date = models.DateField(db_index=True)
     description = models.CharField(max_length=500, blank=True)
     flow_type = models.CharField(max_length=3, choices=FlowType.choices, db_index=True)
@@ -72,11 +78,7 @@ class Transaction(models.Model):
         db_index=True,
         choices=LedgerAccount.choices,
     )
-    category = models.CharField(
-        max_length=128,
-        db_index=True,
-        choices=LedgerCategory.choices,
-    )
+    category = models.CharField(max_length=128, db_index=True)
     project = models.ForeignKey(
         "projects.Project",
         null=True,
@@ -84,7 +86,6 @@ class Transaction(models.Model):
         on_delete=models.SET_NULL,
         related_name="transactions",
     )
-    material_item = models.CharField(max_length=255, blank=True)
     qty = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
     rate = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
     party_name = models.CharField(max_length=255, blank=True)
@@ -115,7 +116,7 @@ class Transaction(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.date} {self.flow_type} {self.amount_excl_vat}"
+        return f"{self.reference_number} · {self.date} {self.flow_type} {self.amount_excl_vat}"
 
     def compute_tax_and_total(self):
         """Excel: O = ROUND(D×N/100,2) when both present; P = D + O when D present."""

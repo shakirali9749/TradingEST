@@ -6,6 +6,7 @@ from .models import LegacyPayable, Transaction
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
     list_display = (
+        "reference_number",
         "date",
         "flow_type",
         "amount_excl_vat",
@@ -15,7 +16,7 @@ class TransactionAdmin(admin.ModelAdmin):
         "project",
     )
     list_filter = ("flow_type", "account", "date")
-    search_fields = ("description", "party_name", "notes")
+    search_fields = ("reference_number", "description", "party_name", "notes")
     raw_id_fields = ("project",)
     date_hierarchy = "date"
 

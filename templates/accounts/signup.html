@@ -1,20 +1,8 @@
 {% extends "auth_base.html" %}
-{% block title %}Create account · Trading EST{% endblock %}
+{% block title %}Create account · {{ brand_name_en }}{% endblock %}
 
 {% block auth_card %}
 <h2 class="h4 mb-3">Create your account</h2>
-
-{% if is_first_user_signup %}
-<div class="alert alert-info small mb-4" role="status">
-  <i class="bi bi-shield-check me-1"></i>
-  <strong>First user:</strong> you will be registered as <strong>Admin</strong> with full access.
-</div>
-{% else %}
-<div class="alert alert-info small mb-4" role="status">
-  <i class="bi bi-info-circle me-1"></i>
-  New accounts start as <strong>Viewer</strong>. An Admin can promote you to Accountant when ready.
-</div>
-{% endif %}
 
 <form method="post" action="" novalidate>
   {% csrf_token %}
@@ -35,9 +23,10 @@
     <span class="te-field-icon" aria-hidden="true"><i class="bi bi-person"></i></span>
     <div class="form-floating">
       {{ form.full_name }}
-      <label for="{{ form.full_name.id_for_label }}">Full name (optional)</label>
+      <label for="{{ form.full_name.id_for_label }}">Full name</label>
     </div>
   </div>
+  {% if form.full_name.errors %}<div class="text-danger small mb-2">{{ form.full_name.errors }}</div>{% endif %}
 
   <div class="te-field-icon-wrap mb-3">
     <span class="te-field-icon" aria-hidden="true"><i class="bi bi-lock"></i></span>

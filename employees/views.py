@@ -8,6 +8,7 @@ from accounts.mixins import AccountantOrAdminRequiredMixin, AdminOrAccountantMix
 
 from .forms import EmployeeForm
 from .models import Employee
+from .services import employees_with_paid_on
 
 
 class EmployeeListView(AccountantOrAdminRequiredMixin, ListView):
@@ -16,7 +17,9 @@ class EmployeeListView(AccountantOrAdminRequiredMixin, ListView):
     context_object_name = "employees"
 
     def get_queryset(self):
-        return Employee.objects.annotate(name_len=Length("name")).order_by("name")
+        return employees_with_paid_on(
+            Employee.objects.annotate(name_len=Length("name"))
+        ).order_by("name")
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -28,6 +31,9 @@ class EmployeeDetailView(AccountantOrAdminRequiredMixin, DetailView):
     model = Employee
     template_name = "employees/employee_detail.html"
     context_object_name = "employee"
+
+    def get_queryset(self):
+        return employees_with_paid_on(super().get_queryset())
 
 
 class EmployeeCreateView(AdminOrAccountantMixin, CreateView):

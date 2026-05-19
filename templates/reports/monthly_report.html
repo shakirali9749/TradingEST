@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Monthly report · Trading EST{% endblock %}
+{% block title %}Monthly report · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Monthly report{% endblock %}
 
 {% block content %}
@@ -8,18 +8,25 @@
 <form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
   <div class="col-12 col-md-auto">
     <label class="form-label small mb-0 text-muted fw-semibold">Month</label>
-    <input class="form-control" type="number" name="month" min="1" max="12" value="{{ month }}">
+    <select class="form-select" name="month" aria-label="Month">
+      {% for num, name in calendar_months %}
+      <option value="{{ num }}" {% if month == num %}selected{% endif %}>{{ name }}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="col-12 col-md-auto">
     <label class="form-label small mb-0 text-muted fw-semibold">Year</label>
-    <input class="form-control" type="number" name="year" value="{{ year }}">
+    <input class="form-control" type="number" name="year" min="2000" max="2100" value="{{ year }}" placeholder="e.g. 2023" aria-label="Year">
   </div>
-  <div class="col-12 col-md-auto"><button type="submit" class="btn te-btn-gradient w-100 w-md-auto">Run</button></div>
+  <div class="col-12 col-md-auto">
+    <button type="submit" class="btn te-btn-gradient w-100 w-md-auto">Generate Report</button>
+  </div>
 </form>
 
-{% if not report_ready %}
-<div class="alert alert-info">{{ report_message }}</div>
-{% else %}
+<div class="te-page-heading-row mb-3">
+  <h1 class="h5 mb-0">{{ month_name }} {{ year }}</h1>
+</div>
+
 <div class="te-table-card te-page-card--flush mb-4">
   <div class="table-responsive">
     <table class="table mb-0 align-middle">
@@ -48,5 +55,4 @@
     </table>
   </div>
 </div>
-{% endif %}
 {% endblock %}

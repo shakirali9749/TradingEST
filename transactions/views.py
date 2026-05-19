@@ -1,4 +1,5 @@
 from django.db.models import Count, F, Q, Sum
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -31,7 +32,8 @@ class TransactionListView(ViewerReadOnlyMixin, ListView):
         q = self.request.GET.get("q", "").strip()
         if q:
             qs = qs.filter(
-                Q(description__icontains=q)
+                Q(reference_number__icontains=q)
+                | Q(description__icontains=q)
                 | Q(party_name__icontains=q)
                 | Q(notes__icontains=q)
                 | Q(invoice_number__icontains=q)
@@ -67,6 +69,14 @@ class TransactionDetailView(SessionAuthenticatedMixin, DetailView):
     template_name = "transactions/transaction_detail.html"
     context_object_name = "transaction"
 
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        ref = self.kwargs.get("reference_number")
+        if ref:
+            return get_object_or_404(queryset, reference_number__iexact=ref.strip())
+        return super().get_object(queryset)
+
     def get_queryset(self):
         return Transaction.objects.select_related("project").annotate(
             project_name=F("project__name"),
@@ -79,7 +89,10 @@ class TransactionCreateView(AdminOrAccountantMixin, CreateView):
     template_name = "transactions/transaction_form.html"
 
     def get_success_url(self):
-        return reverse_lazy("transactions:detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy(
+            "transactions:detail_by_ref",
+            kwargs={"reference_number": self.object.reference_number},
+        )
 
 
 class TransactionUpdateView(AdminOrAccountantMixin, UpdateView):
@@ -91,7 +104,10 @@ class TransactionUpdateView(AdminOrAccountantMixin, UpdateView):
         return Transaction.objects.select_related("project")
 
     def get_success_url(self):
-        return reverse_lazy("transactions:detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy(
+            "transactions:detail_by_ref",
+            kwargs={"reference_number": self.object.reference_number},
+        )
 
 
 class TransactionDeleteView(AdminOrAccountantMixin, DeleteView):

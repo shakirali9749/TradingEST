@@ -14,35 +14,22 @@ class SignupView(FormView):
     template_name = "accounts/signup.html"
     form_class = SignupForm
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["is_first_user_signup"] = not User.objects.exists()
-        return ctx
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect("reports:dashboard")
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        first_user = not User.objects.exists()
-        role = Role.ADMIN if first_user else Role.VIEWER
         User.objects.create_user(
             email=form.cleaned_data["email"],
             password=form.cleaned_data["password1"],
-            full_name=form.cleaned_data.get("full_name") or "",
-            role=role,
+            full_name=form.cleaned_data["full_name"],
+            role=Role.ADMIN,
         )
-        if first_user:
-            messages.success(
-                self.request,
-                "Your administrator account is ready. Sign in to continue.",
-            )
-        else:
-            messages.success(
-                self.request,
-                "Account created with Viewer access. Sign in — an Admin can change your role if needed.",
-            )
+        messages.success(
+            self.request,
+            "Your administrator account is ready. Sign in to continue.",
+        )
         return redirect("accounts:login")
 
 

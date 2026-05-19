@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.db.models import DecimalField, ExpressionWrapper, F, Q, Sum, Value
 from django.db.models.functions import Coalesce
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -20,7 +21,7 @@ class ProjectListView(ViewerReadOnlyMixin, ListView):
     context_object_name = "projects"
 
     def get_queryset(self):
-        return (
+        qs = (
             Project.objects.annotate(
                 total_income_paid=Sum(
                     "transactions__total_amount",
@@ -39,11 +40,21 @@ class ProjectListView(ViewerReadOnlyMixin, ListView):
                     output_field=DecimalField(max_digits=18, decimal_places=2),
                 )
             )
-            .order_by("name")
+            .order_by("reference_number")
         )
+        q = self.request.GET.get("q", "").strip()
+        if q:
+            qs = qs.filter(
+                Q(reference_number__icontains=q)
+                | Q(name__icontains=q)
+                | Q(client_name__icontains=q)
+                | Q(notes__icontains=q)
+            )
+        return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
+        ctx["filters"] = {"q": self.request.GET.get("q", "")}
         for p in ctx["object_list"]:
             ti = p.total_income_paid or Decimal("0")
             if p.contract_incl_vat is not None:
@@ -57,6 +68,14 @@ class ProjectDetailView(SessionAuthenticatedMixin, DetailView):
     model = Project
     template_name = "projects/project_detail.html"
     context_object_name = "project"
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+        ref = self.kwargs.get("reference_number")
+        if ref:
+            return get_object_or_404(queryset, reference_number__iexact=ref.strip())
+        return super().get_object(queryset)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)

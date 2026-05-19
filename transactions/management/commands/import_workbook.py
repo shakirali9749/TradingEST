@@ -373,7 +373,6 @@ class Command(BaseCommand):
         c_acc = _pick(hm, "Account", "account")
         c_cat = _pick(hm, "Category", "category")
         c_proj = _pick(hm, "Project", "project")
-        c_mat = _pick(hm, "Material Item", "material item")
         c_qty = _pick(hm, "Qty", "qty", "quantity")
         c_rate = _pick(hm, "Rate", "rate")
         c_party = _pick(hm, "Party Name", "party name")
@@ -441,9 +440,12 @@ class Command(BaseCommand):
                 flow_type=flow,
                 amount_excl_vat=_dec(row[c_amt]) or Decimal("0"),
                 account=_enum_coerce(acc_raw, LedgerAccount, LedgerAccount.CASH.value),
-                category=_enum_coerce(cat_raw, LedgerCategory, LedgerCategory.MATERIAL_PURCHASE.value),
+                category=(
+                    _enum_coerce(cat_raw, LedgerCategory, None)
+                    or (cat_raw.strip() if cat_raw else "")
+                    or LedgerCategory.MATERIAL_PURCHASE.value
+                ),
                 project=proj,
-                material_item=_str(row[c_mat], 255) if c_mat is not None else "",
                 qty=qty,
                 rate=rate,
                 party_name=_str(row[c_party], 255) if c_party is not None else "",
@@ -478,6 +480,15 @@ class Command(BaseCommand):
         c_daily = _pick(hm, "Daily Rate", "daily rate")
         c_days = _pick(hm, "Days Worked (This Month)", "days worked", "days worked (this month)")
         c_paid = _pick(hm, "Total Salary Paid This Month", "salary paid", "total salary paid this month")
+        c_paid_date = _pick(
+            hm,
+            "Paid on",
+            "paid on",
+            "payment date",
+            "date paid",
+            "salary paid date",
+            "paid date",
+        )
         c_adv_t = _pick(hm, "Total Advance Taken", "advance taken", "total advance taken")
         c_adv_a = _pick(hm, "Total Advance Adjusted", "advance adjusted", "total advance adjusted")
         c_prev = _pick(hm, "Previous Pending Salary", "previous pending salary")
@@ -502,6 +513,9 @@ class Command(BaseCommand):
                     "daily_rate": _dec(row[c_daily]) if c_daily is not None else None,
                     "days_worked": _dec(row[c_days]) if c_days is not None else None,
                     "salary_paid_this_month": _dec(row[c_paid]) if c_paid is not None else None,
+                    "salary_paid_date": _to_date(row[c_paid_date])
+                    if c_paid_date is not None
+                    else None,
                     "advance_taken": _dec(row[c_adv_t]) if c_adv_t is not None else None,
                     "advance_adjusted": _dec(row[c_adv_a]) if c_adv_a is not None else None,
                     "previous_pending_salary": _dec(row[c_prev]) if c_prev is not None else None,

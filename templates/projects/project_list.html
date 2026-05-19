@@ -1,15 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Projects · Trading EST{% endblock %}
+{% block title %}Projects · {{ brand_name_en }}{% endblock %}
 {% block header_title %}Projects{% endblock %}
 
 {% block content %}
-<div class="alert alert-warning">⚠️ Net Profit = Contract (excl. VAT) − Total Expense (incl. VAT) — mixed basis as per source workbook</div>
-<div class="te-page-heading-row">
+<div class="te-page-heading-row flex-column flex-sm-row align-items-stretch align-items-sm-center">
   <h1>Projects</h1>
   {% if user.role == 'admin' or user.role == 'accountant' %}
-  <a class="btn te-btn-gradient" href="{% url 'projects:add' %}"><i class="bi bi-plus-lg me-1"></i> New project</a>
+  <a class="btn te-btn-gradient w-100 w-sm-auto" href="{% url 'projects:add' %}"><i class="bi bi-plus-lg me-1"></i> New project</a>
   {% endif %}
 </div>
+
+<form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
+  <div class="col-12 col-md-8">
+    <label class="form-label small text-muted mb-1 fw-semibold">Search by reference #, name, client…</label>
+    <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="e.g. PRJ-0001">
+  </div>
+  <div class="col-12 col-md-4">
+    <button class="btn te-btn-secondary w-100 mt-md-4" type="submit"><i class="bi bi-funnel me-1"></i> Filter</button>
+  </div>
+</form>
 
 {% if projects %}
 <div class="te-table-card">
@@ -17,24 +26,25 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
-          <th>Project</th><th>Client</th><th>Contract excl.</th><th>VAT 15%</th><th>Incl.</th><th>Advance 50%</th>
+          <th>Ref #</th><th>Project</th><th>Client</th><th>Contract excl.</th><th>VAT 15%</th><th>Incl.</th><th>Client advance</th>
           <th>Income (Paid)</th><th>Expense</th><th>Net profit*</th><th>Remaining**</th><th></th>
         </tr>
       </thead>
       <tbody>
         {% for p in projects %}
         <tr>
+          <td><code class="small">{{ p.reference_number }}</code></td>
           <td class="fw-medium">{{ p.name }}</td>
           <td>{{ p.client_name }}</td>
           <td>{{ p.contract_value_excl_vat|default:"—" }}</td>
           <td>{{ p.vat_15|default:"—" }}</td>
           <td>{{ p.contract_incl_vat|default:"—" }}</td>
-          <td>{{ p.required_advance_50_incl_vat|default:"—" }}</td>
+          <td>{{ p.client_advance_display|default:"—" }}</td>
           <td>{{ p.total_income_paid|default:"0" }}</td>
           <td>{{ p.total_expense|default:"0" }}</td>
           <td>{{ p.net_profit_line|default:"—" }}</td>
           <td>{{ p.remaining_display|default:"—" }}</td>
-          <td><a class="btn btn-sm te-btn-secondary" href="{% url 'projects:detail' p.pk %}">Detail</a></td>
+          <td><a class="btn btn-sm te-btn-secondary" href="{% url 'projects:detail_by_ref' p.reference_number %}">Detail</a></td>
         </tr>
         {% endfor %}
       </tbody>
@@ -45,7 +55,7 @@
 {% else %}
 <div class="te-page-card te-empty-state">
   <i class="bi bi-kanban" aria-hidden="true"></i>
-  <p>No projects yet. {% if user.role == 'admin' or user.role == 'accountant' %}Create one to get started.{% endif %}</p>
+  <p>No projects match your search. {% if user.role == 'admin' or user.role == 'accountant' %}Create one to get started.{% endif %}</p>
 </div>
 {% endif %}
 {% endblock %}
