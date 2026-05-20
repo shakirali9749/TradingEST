@@ -19,7 +19,7 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
-          <th>Name</th><th>Paid on</th><th>Type</th><th>Due</th><th>Paid</th><th>Pending</th><th>Advance bal.</th><th>Total pending</th><th></th>
+          <th>Employee Name</th><th>Paid on</th><th>Type (Monthly/Daily)</th><th>Salary Due This Month</th><th>Total Salary Paid This Month</th><th>Pending Salary This Month</th><th>Advance Balance</th><th>Total Pending Salary(All Months)</th><th></th>
         </tr>
       </thead>
       <tbody>
@@ -28,11 +28,11 @@
           <td class="fw-medium">{{ e.name }}</td>
           <td>{{ e.paid_on|default:"—" }}</td>
           <td><span class="badge rounded-pill text-bg-light border">{{ e.salary_type }}</span></td>
-          <td>{{ e.salary_due_this_month }}</td>
-          <td>{{ e.salary_paid_this_month|default:"—" }}</td>
-          <td>{{ e.pending_salary_this_month }}</td>
-          <td>{{ e.advance_balance }}</td>
-          <td>{{ e.total_pending_salary_all_months }}</td>
+          <td>{{ e.salary_due_this_month|sar }}</td>
+          <td>{{ e.salary_paid_this_month|sar }}</td>
+          <td>{{ e.pending_salary_this_month|sar }}</td>
+          <td>{{ e.advance_balance|sar }}</td>
+          <td>{{ e.total_pending_salary_all_months|sar }}</td>
           <td><a class="btn btn-sm te-btn-secondary" href="{% url 'employees:detail' e.pk %}">Detail</a></td>
         </tr>
         {% endfor %}

@@ -41,6 +41,21 @@ class PartyType(models.TextChoices):
     CLIENT = "Client", "Client"
     SUPPLIER = "Supplier", "Supplier"
     EMPLOYEE = "Employee", "Employee"
+    OWNER = "Owner", "Owner"
+
+
+class TransactionCategory(models.Model):
+    """User-defined and default transaction categories (persisted for dropdowns)."""
+
+    name = models.CharField(max_length=128, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name_plural = "Transaction categories"
+
+    def __str__(self):
+        return self.name
 
 
 def normalize_payment_status(raw: str | None) -> str:

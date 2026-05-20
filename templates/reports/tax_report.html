@@ -79,31 +79,31 @@
       <thead class="table-light">
         <tr>
           <th>Month</th>
-          <th class="text-end">Sales (excl. VAT)</th>
-          <th class="text-end">Output VAT</th>
-          <th class="text-end">Purchases (excl.)</th>
-          <th class="text-end">Input VAT</th>
-          <th class="text-end">Net VAT payable</th>
+          <th class="text-end">Total Sales (Excl. VAT)</th>
+          <th class="text-end">Output VAT 15%</th>
+          <th class="text-end">Total Purchases (Excl. VAT)</th>
+          <th class="text-end">Input VAT 15%</th>
+          <th class="text-end">Net VAT Payable</th>
         </tr>
       </thead>
       <tbody>
         {% for row in report.rows %}
         <tr>
           <td class="fw-medium">{{ row.month_name }}</td>
-          <td class="text-end">{{ row.total_sales_excl_vat }}</td>
-          <td class="text-end">{{ row.output_vat }}</td>
-          <td class="text-end">{{ row.total_purchases_excl_vat }}</td>
-          <td class="text-end">{{ row.input_vat }}</td>
-          <td class="text-end">{% if row.net_vat_payable is None %}—{% else %}{{ row.net_vat_payable }}{% endif %}</td>
+          <td class="text-end">{{ row.total_sales_excl_vat|sar }}</td>
+          <td class="text-end">{{ row.output_vat|sar }}</td>
+          <td class="text-end">{{ row.total_purchases_excl_vat|sar }}</td>
+          <td class="text-end">{{ row.input_vat|sar }}</td>
+          <td class="text-end">{{ row.net_vat_payable|sar }}</td>
         </tr>
         {% endfor %}
         <tr class="te-row-emphasis">
           <td class="fw-bold">Total</td>
-          <td class="text-end fw-bold">{{ report.totals.total_sales_excl_vat }}</td>
-          <td class="text-end fw-bold">{{ report.totals.output_vat }}</td>
-          <td class="text-end fw-bold">{{ report.totals.total_purchases_excl_vat }}</td>
-          <td class="text-end fw-bold">{{ report.totals.input_vat }}</td>
-          <td class="text-end fw-bold">{% if report.totals.net_vat_payable is None %}—{% else %}{{ report.totals.net_vat_payable }}{% endif %}</td>
+          <td class="text-end fw-bold">{{ report.totals.total_sales_excl_vat|sar }}</td>
+          <td class="text-end fw-bold">{{ report.totals.output_vat|sar }}</td>
+          <td class="text-end fw-bold">{{ report.totals.total_purchases_excl_vat|sar }}</td>
+          <td class="text-end fw-bold">{{ report.totals.input_vat|sar }}</td>
+          <td class="text-end fw-bold">{{ report.totals.net_vat_payable|sar }}</td>
         </tr>
       </tbody>
     </table>

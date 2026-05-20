@@ -87,26 +87,26 @@ def accounts_summary_rows():
         ("Cash", *pair_total_p("Cash"), "With VAT"),
         ("Bank", *pair_total_p("Bank"), "With VAT"),
         ("Owner Contribution", *pair_total_p("Owner Contribution"), "With VAT"),
-        ("Owner Drawings", *pair_owner_drawings(), "Without VAT amount"),
+        ("Owner Drawings", *pair_owner_drawings(), "Without VAT"),
         (
             "Accounts Receivable",
             *pair_account_d("Accounts Receivable"),
-            "Without VAT amount",
+            "Without VAT",
         ),
         (
             "Accounts Payable",
             *pair_account_d("Accounts Payable"),
-            "Without VAT amount",
+            "Without VAT",
         ),
         (
             "Employee Payable",
             *pair_account_d("Employee Payable"),
-            "Without VAT amount",
+            "Without VAT",
         ),
         (
             "Employee Advance",
             *pair_account_d("Employee Advance"),
-            "Without VAT amount",
+            "Without VAT",
         ),
     ]:
         rows.append(

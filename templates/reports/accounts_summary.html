@@ -11,9 +11,9 @@
         {% for r in rows %}
         <tr>
           <td class="fw-semibold">{{ r.label }}</td>
-          <td>{{ r.total_in }}</td>
-          <td>{{ r.total_out }}</td>
-          <td><strong class="text-primary">{{ r.balance }}</strong></td>
+          <td>{{ r.total_in|sar }}</td>
+          <td>{{ r.total_out|sar }}</td>
+          <td><strong class="text-primary">{{ r.balance|sar }}</strong></td>
           <td class="small text-muted">{{ r.note }}</td>
         </tr>
         {% endfor %}

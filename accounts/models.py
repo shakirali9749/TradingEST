@@ -31,6 +31,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    @property
+    def display_name(self):
+        """Name shown in the header (full name, or email local-part)."""
+        name = (self.full_name or "").strip()
+        if name:
+            return name
+        return self.email.split("@")[0] if self.email else ""
+
     def save(self, *args, **kwargs):
         self.is_staff = self.role == Role.ADMIN
         super().save(*args, **kwargs)

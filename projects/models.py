@@ -65,10 +65,13 @@ class Project(models.Model):
     @property
     def client_advance_display(self):
         """Amount with auto-calculated % of contract incl. VAT."""
+        from TradingEST.formatting import format_sar
+
         amt = self.advance_amount_incl_vat
         if amt is None:
             return None
+        amt_str = format_sar(amt)
         pct = self.advance_percent_of_contract
         if pct is not None:
-            return f"{amt} ({self._format_percent(pct)}%)"
-        return str(amt)
+            return f"{amt_str} ({self._format_percent(pct)}%)"
+        return amt_str

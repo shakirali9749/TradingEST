@@ -15,20 +15,23 @@
 </div>
 
 <dl class="row te-dl-card">
-  <dt class="col-sm-3">Reference #</dt><dd class="col-sm-9"><code>{{ transaction.reference_number }}</code></dd>
   <dt class="col-sm-3">Date</dt><dd class="col-sm-9">{{ transaction.date }}</dd>
   <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ transaction.description }}</dd>
-  <dt class="col-sm-3">Type</dt><dd class="col-sm-9">{% include "partials/flow_badge.html" with flow=transaction.flow_type %}</dd>
-  <dt class="col-sm-3">Amount (excl. VAT)</dt><dd class="col-sm-9">{{ transaction.amount_excl_vat }}</dd>
+  <dt class="col-sm-3">Type (IN/OUT)</dt><dd class="col-sm-9">{% include "partials/flow_badge.html" with flow=transaction.flow_type %}</dd>
+  <dt class="col-sm-3">Amount (Excl. VAT)</dt><dd class="col-sm-9">{{ transaction.amount_excl_vat|sar }}</dd>
   <dt class="col-sm-3">Account</dt><dd class="col-sm-9">{{ transaction.account }}</dd>
   <dt class="col-sm-3">Category</dt><dd class="col-sm-9">{{ transaction.category }}</dd>
-  <dt class="col-sm-3">Project</dt><dd class="col-sm-9">{% if transaction.project %}{{ transaction.project.name }}{% else %}—{% endif %}</dd>
-  <dt class="col-sm-3">Tax %</dt><dd class="col-sm-9">{{ transaction.tax_percent|default:"—" }}</dd>
-  <dt class="col-sm-3">Tax amount</dt><dd class="col-sm-9">{{ transaction.tax_amount|default:"—" }}</dd>
-  <dt class="col-sm-3">Total amount</dt><dd class="col-sm-9">{{ transaction.total_amount|default:"—" }}</dd>
-  <dt class="col-sm-3">Payment status</dt><dd class="col-sm-9">{% include "partials/payment_badge.html" with status=transaction.payment_status %}</dd>
-  <dt class="col-sm-3">Invoice number</dt><dd class="col-sm-9">{{ transaction.invoice_number|default:"—" }}</dd>
-  <dt class="col-sm-3">Party</dt><dd class="col-sm-9">{{ transaction.party_name }} / {{ transaction.party_type|default:"—" }}</dd>
-  <dt class="col-sm-3">Notes</dt><dd class="col-sm-9">{{ transaction.notes|default:"—" }}</dd>
+  <dt class="col-sm-3">Reference #</dt><dd class="col-sm-9">{% if transaction.project %}<code>{{ transaction.project.reference_number }}</code>{% else %}—{% endif %}</dd>
+  <dt class="col-sm-3">Project Name</dt><dd class="col-sm-9">{% if transaction.project %}{{ transaction.project.name }}{% else %}—{% endif %}</dd>
+  <dt class="col-sm-3">Material Item</dt><dd class="col-sm-9">{{ transaction.notes|default:"—" }}</dd>
+  <dt class="col-sm-3">Qty</dt><dd class="col-sm-9">{{ transaction.qty|num }}</dd>
+  <dt class="col-sm-3">Rate</dt><dd class="col-sm-9">{{ transaction.rate|num }}</dd>
+  <dt class="col-sm-3">Party Name</dt><dd class="col-sm-9">{{ transaction.party_name|default:"—" }}</dd>
+  <dt class="col-sm-3">Party Type</dt><dd class="col-sm-9">{{ transaction.party_type|default:"—" }}</dd>
+  <dt class="col-sm-3">Invoice #</dt><dd class="col-sm-9">{{ transaction.invoice_number|default:"—" }}</dd>
+  <dt class="col-sm-3">Tax %</dt><dd class="col-sm-9">{{ transaction.tax_percent|num }}</dd>
+  <dt class="col-sm-3">Tax Amount</dt><dd class="col-sm-9">{{ transaction.tax_amount|sar }}</dd>
+  <dt class="col-sm-3">Total Amount</dt><dd class="col-sm-9">{{ transaction.total_amount|sar }}</dd>
+  <dt class="col-sm-3">Payment Status</dt><dd class="col-sm-9">{% include "partials/payment_badge.html" with status=transaction.payment_status %}</dd>
 </dl>
 {% endblock %}

@@ -15,15 +15,15 @@
   <div class="table-responsive">
     <table class="table mb-0 align-middle">
       <thead>
-        <tr><th>Supplier</th><th>Payable</th><th>Paid</th><th>Remain</th><th>Project</th><th>Note</th><th></th></tr>
+        <tr><th>Suppliars Names</th><th>Total payable</th><th>Total paid</th><th>Total Remain after Paid</th><th>Projects Name</th><th>Note</th><th></th></tr>
       </thead>
       <tbody>
         {% for row in legacy_rows %}
         <tr>
           <td class="fw-medium">{{ row.supplier_name }}</td>
-          <td>{{ row.total_payable }}</td>
-          <td>{{ row.total_paid }}</td>
-          <td><strong class="text-primary">{{ row.remaining_calc }}</strong></td>
+          <td>{{ row.total_payable|sar }}</td>
+          <td>{{ row.total_paid|sar }}</td>
+          <td><strong class="text-primary">{{ row.remaining_calc|sar }}</strong></td>
           <td>{{ row.projects_name }}</td>
           <td class="small">{{ row.status_note }}</td>
           <td>

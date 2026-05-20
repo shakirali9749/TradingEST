@@ -16,6 +16,7 @@ ALLOWED_HOSTS = ['13.48.148.54', 'localhost', '127.0.0.1', '172.31.46.187','*']
 
 
 INSTALLED_APPS = [
+    "TradingEST.apps.TradingESTConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -47,6 +48,7 @@ TEMPLATES = [
         "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
+            "builtins": ["TradingEST.templatetags.te_format"],
             "context_processors": [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",

@@ -26,28 +26,28 @@
     <div class="te-kpi-card te-kpi--cash">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-cash-stack te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Cash balance</div>
-      <div class="te-kpi-card__value">{{ metrics.cash_balance }}</div>
+      <div class="te-kpi-card__value">{{ metrics.cash_balance|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--bank">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-bank te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Bank balance</div>
-      <div class="te-kpi-card__value">{{ metrics.bank_balance }}</div>
+      <div class="te-kpi-card__value">{{ metrics.bank_balance|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--ar">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-arrow-down-circle te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Accounts receivable</div>
-      <div class="te-kpi-card__value">{{ metrics.accounts_receivable }}</div>
+      <div class="te-kpi-card__value">{{ metrics.accounts_receivable|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--ap">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-arrow-up-circle te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Accounts payable</div>
-      <div class="te-kpi-card__value">{{ metrics.accounts_payable }}</div>
+      <div class="te-kpi-card__value">{{ metrics.accounts_payable|sar }}</div>
     </div>
   </div>
 
@@ -56,35 +56,35 @@
     <div class="te-kpi-card te-kpi--owner">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-person-badge te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Owner net (contribution − drawings)</div>
-      <div class="te-kpi-card__value">{{ metrics.owner_net_drawings }}</div>
+      <div class="te-kpi-card__value">{{ metrics.owner_net_drawings|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--employee">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-wallet2 te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Employee payable</div>
-      <div class="te-kpi-card__value">{{ metrics.employee_payable }}</div>
+      <div class="te-kpi-card__value">{{ metrics.employee_payable|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--employee">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-piggy-bank te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Employee advance</div>
-      <div class="te-kpi-card__value">{{ metrics.employee_advance }}</div>
+      <div class="te-kpi-card__value">{{ metrics.employee_advance|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--profit">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-graph-up-arrow te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Total net profit (all projects)</div>
-      <div class="te-kpi-card__value">{{ metrics.total_net_profit_projects }}</div>
+      <div class="te-kpi-card__value">{{ metrics.total_net_profit_projects|sar }}</div>
     </div>
   </div>
   <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
     <div class="te-kpi-card te-kpi--vat">
       <span class="te-kpi-card__icon-wrap" aria-hidden="true"><i class="bi bi-percent te-kpi-card__icon"></i></span>
       <div class="te-kpi-card__label">Net VAT payable</div>
-      <div class="te-kpi-card__value">{% if metrics.net_vat_payable is None %}—{% else %}{{ metrics.net_vat_payable }}{% endif %}</div>
+      <div class="te-kpi-card__value">{{ metrics.net_vat_payable|sar }}</div>
       <p class="small mb-0 mt-2" style="color: var(--te-muted);">Period: {{ metrics.vat_period_label }}</p>
     </div>
   </div>

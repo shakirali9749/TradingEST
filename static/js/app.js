@@ -5,6 +5,26 @@
 (function () {
   "use strict";
 
+  /**
+   * Format money as SAR 1,234.56 (en-US grouping, 2 decimal places).
+   */
+  window.teFormatSar = function (value) {
+    if (value === null || value === undefined || value === "") {
+      return "—";
+    }
+    var n = Number(value);
+    if (Number.isNaN(n)) {
+      return "—";
+    }
+    return (
+      "SAR " +
+      n.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    );
+  };
+
   var STORAGE_MD = "tradingest.sidebar.mdExpanded";
 
   function width() {

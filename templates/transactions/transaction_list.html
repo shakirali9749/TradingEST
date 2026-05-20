@@ -13,7 +13,7 @@
 <form method="get" class="row g-2 align-items-end mb-4 te-toolbar te-toolbar--filters">
   <div class="col-12 col-md-5">
     <label class="form-label small text-muted mb-1 fw-semibold">Search</label>
-    <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Reference #, description, party, notes…">
+    <input class="form-control" type="search" name="q" value="{{ filters.q }}" placeholder="Project reference #, description, party, notes…">
   </div>
   <div class="col-12 col-md-4">
     <label class="form-label small text-muted mb-1 fw-semibold">Account (exact)</label>
@@ -27,7 +27,7 @@
 <p class="small mb-3" style="color: var(--te-muted);">
   {% if filters_active %}<strong style="color: var(--te-text);">Filtered total:</strong>{% else %}Ledger totals (all rows):{% endif %}
   {{ ledger_totals.total_lines }} lines ·
-  Sum excl. VAT {{ ledger_totals.sum_excl }} · Sum total amount {{ ledger_totals.sum_total }}
+  Sum excl. VAT {{ ledger_totals.sum_excl|sar }} · Sum total amount {{ ledger_totals.sum_total|sar }}
 </p>
 {% if account_breakdown %}
 <details class="mb-3 te-page-card p-3"><summary class="small" style="color: var(--te-muted);">By account (values + annotate)</summary>
@@ -36,7 +36,7 @@
       <thead><tr><th>Account</th><th>Lines</th><th>Sum excl.</th></tr></thead>
       <tbody>
         {% for row in account_breakdown %}
-        <tr><td>{{ row.account }}</td><td>{{ row.lines }}</td><td>{{ row.sum_excl }}</td></tr>
+        <tr><td>{{ row.account }}</td><td>{{ row.lines }}</td><td>{{ row.sum_excl|sar }}</td></tr>
         {% endfor %}
       </tbody>
     </table>
@@ -52,19 +52,19 @@
     <div class="card-body">
       <div class="te-tx-card__top">
         <div>
-          <div class="small text-muted"><code>{{ t.reference_number }}</code> · {{ t.date }}</div>
+          <div class="small text-muted">{% if t.project %}<code>{{ t.project.reference_number }}</code> · {% endif %}{{ t.date }}</div>
           <div class="mt-1">{% include "partials/flow_badge.html" with flow=t.flow_type %}</div>
         </div>
         {% include "partials/payment_badge.html" with status=t.payment_status %}
       </div>
-      <div class="te-tx-card__amount">{{ t.total_amount|default:t.amount_excl_vat }}</div>
-      <p class="small mb-1"><strong>Excl.</strong> {{ t.amount_excl_vat }} · <strong>Tax</strong> {{ t.tax_amount|default:"—" }}</p>
+      <div class="te-tx-card__amount">{{ t.total_amount|default:t.amount_excl_vat|sar }}</div>
+      <p class="small mb-1"><strong>Amount (Excl. VAT)</strong> {{ t.amount_excl_vat|sar }} · <strong>Tax Amount</strong> {{ t.tax_amount|sar }}</p>
       <p class="small mb-1"><strong>Account</strong> {{ t.account }}</p>
       <p class="small mb-1"><strong>Category</strong> {{ t.category }}</p>
-      {% if t.party_name %}<p class="small mb-1"><strong>Party</strong> {{ t.party_name }}</p>{% endif %}
-      {% if t.project %}<p class="small mb-0"><strong>Project</strong> {{ t.project.name }}</p>{% endif %}
+      {% if t.party_name %}<p class="small mb-1"><strong>Party Name</strong> {{ t.party_name }}</p>{% endif %}
+      {% if t.project %}<p class="small mb-0"><strong>Project Name</strong> {{ t.project.name }}</p>{% endif %}
       <div class="te-tx-card__actions">
-        <a class="btn te-btn-secondary" href="{% url 'transactions:detail_by_ref' t.reference_number %}">View</a>
+        <a class="btn te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a>
         {% if user.role == 'admin' or user.role == 'accountant' %}
         <a class="btn te-btn-gradient" href="{% url 'transactions:edit' t.pk %}">Edit</a>
         <a class="btn te-btn-danger" href="{% url 'transactions:delete' t.pk %}">Delete</a>
@@ -81,36 +81,36 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
-          <th>Ref #</th>
+          <th>Reference #</th>
           <th>Date</th>
-          <th>Type</th>
-          <th>Status</th>
-          <th>Excl.</th>
-          <th>Tax</th>
-          <th>Total</th>
+          <th>Type (IN/OUT)</th>
+          <th>Payment Status</th>
+          <th>Amount (Excl. VAT)</th>
+          <th>Tax Amount</th>
+          <th>Total Amount</th>
           <th>Account</th>
           <th>Category</th>
-          <th>Project</th>
-          <th>Party</th>
+          <th>Project Name</th>
+          <th>Party Name</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {% for t in transactions %}
         <tr>
-          <td><code class="small">{{ t.reference_number }}</code></td>
+          <td>{% if t.project %}<code class="small">{{ t.project.reference_number }}</code>{% else %}—{% endif %}</td>
           <td>{{ t.date }}</td>
           <td>{% include "partials/flow_badge.html" with flow=t.flow_type %}</td>
           <td>{% include "partials/payment_badge.html" with status=t.payment_status %}</td>
-          <td>{{ t.amount_excl_vat }}</td>
-          <td>{{ t.tax_amount|default:"—" }}</td>
-          <td>{{ t.total_amount|default:"—" }}</td>
+          <td>{{ t.amount_excl_vat|sar }}</td>
+          <td>{{ t.tax_amount|sar }}</td>
+          <td>{{ t.total_amount|sar }}</td>
           <td>{{ t.account }}</td>
           <td>{{ t.category }}</td>
           <td>{% if t.project %}{{ t.project.name }}{% endif %}</td>
           <td>{{ t.party_name }}</td>
           <td class="text-nowrap">
-            <a class="btn btn-sm te-btn-secondary" href="{% url 'transactions:detail_by_ref' t.reference_number %}">View</a>
+            <a class="btn btn-sm te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a>
             {% if user.role == 'admin' or user.role == 'accountant' %}
             <a class="btn btn-sm te-btn-gradient" href="{% url 'transactions:edit' t.pk %}">Edit</a>
             {% endif %}

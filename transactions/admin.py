@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import LegacyPayable, Transaction
+from .models import LegacyPayable, Transaction, TransactionCategory
+
+
+@admin.register(TransactionCategory)
+class TransactionCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "created_at")
+    search_fields = ("name",)
 
 
 @admin.register(Transaction)

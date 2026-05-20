@@ -15,17 +15,20 @@
 </div>
 
 <dl class="row te-dl-card">
-  <dt class="col-sm-3">Salary type</dt><dd class="col-sm-9">{{ employee.get_salary_type_display }}</dd>
-  <dt class="col-sm-3">Monthly salary</dt><dd class="col-sm-9">{{ employee.monthly_salary|default:"—" }}</dd>
-  <dt class="col-sm-3">Daily rate / days</dt><dd class="col-sm-9">{{ employee.daily_rate|default:"—" }} / {{ employee.days_worked|default:"—" }}</dd>
-  <dt class="col-sm-3">Salary due (calc)</dt><dd class="col-sm-9">{{ employee.salary_due_this_month }}</dd>
-  <dt class="col-sm-3">Paid this month</dt><dd class="col-sm-9">{{ employee.salary_paid_this_month|default:"—" }}</dd>
-  <dt class="col-sm-3">Payment date</dt><dd class="col-sm-9">{{ employee.paid_on|default:"—" }}</dd>
-  <dt class="col-sm-3">Pending salary</dt><dd class="col-sm-9">{{ employee.pending_salary_this_month }}</dd>
-  <dt class="col-sm-3">Advance taken / adjusted</dt><dd class="col-sm-9">{{ employee.advance_taken|default:"—" }} / {{ employee.advance_adjusted|default:"—" }}</dd>
-  <dt class="col-sm-3">Advance balance</dt><dd class="col-sm-9">{{ employee.advance_balance }}</dd>
-  <dt class="col-sm-3">Previous pending</dt><dd class="col-sm-9">{{ employee.previous_pending_salary|default:"—" }}</dd>
-  <dt class="col-sm-3">Total pending (all months)</dt><dd class="col-sm-9">{{ employee.total_pending_salary_all_months }}</dd>
+  <dt class="col-sm-3">Employee Name</dt><dd class="col-sm-9">{{ employee.name }}</dd>
+  <dt class="col-sm-3">Type (Monthly/Daily)</dt><dd class="col-sm-9">{{ employee.get_salary_type_display }}</dd>
+  <dt class="col-sm-3">Monthly Salary</dt><dd class="col-sm-9">{{ employee.monthly_salary|sar }}</dd>
+  <dt class="col-sm-3">Daily Rate</dt><dd class="col-sm-9">{{ employee.daily_rate|sar }}</dd>
+  <dt class="col-sm-3">Days Worked (This Month)</dt><dd class="col-sm-9">{{ employee.days_worked|num }}</dd>
+  <dt class="col-sm-3">Salary Due This Month</dt><dd class="col-sm-9">{{ employee.salary_due_this_month|sar }}</dd>
+  <dt class="col-sm-3">Total Salary Paid This Month</dt><dd class="col-sm-9">{{ employee.salary_paid_this_month|sar }}</dd>
+  <dt class="col-sm-3">Paid on</dt><dd class="col-sm-9">{{ employee.paid_on|default:"—" }}</dd>
+  <dt class="col-sm-3">Pending Salary This Month</dt><dd class="col-sm-9">{{ employee.pending_salary_this_month|sar }}</dd>
+  <dt class="col-sm-3">Total Advance Taken</dt><dd class="col-sm-9">{{ employee.advance_taken|sar }}</dd>
+  <dt class="col-sm-3">Total Advance Adjusted</dt><dd class="col-sm-9">{{ employee.advance_adjusted|sar }}</dd>
+  <dt class="col-sm-3">Advance Balance</dt><dd class="col-sm-9">{{ employee.advance_balance|sar }}</dd>
+  <dt class="col-sm-3">Previous Pending Salary</dt><dd class="col-sm-9">{{ employee.previous_pending_salary|sar }}</dd>
+  <dt class="col-sm-3">Total Pending Salary(All Months)</dt><dd class="col-sm-9">{{ employee.total_pending_salary_all_months|sar }}</dd>
   <dt class="col-sm-3">Note</dt><dd class="col-sm-9">{{ employee.note|default:"—"|linebreaks }}</dd>
 </dl>
 {% endblock %}

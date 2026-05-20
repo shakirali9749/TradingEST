@@ -12,6 +12,7 @@ urlpatterns = [
         name="detail_by_ref",
     ),
     path("<int:pk>/", views.TransactionDetailView.as_view(), name="detail"),
+    path("categories/add/", views.CategoryCreateView.as_view(), name="category_add"),
     path("add/", views.TransactionCreateView.as_view(), name="add"),
     path("<int:pk>/edit/", views.TransactionUpdateView.as_view(), name="edit"),
     path("<int:pk>/delete/", views.TransactionDeleteView.as_view(), name="delete"),

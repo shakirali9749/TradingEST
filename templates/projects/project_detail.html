@@ -16,25 +16,25 @@
 
 <dl class="row te-dl-card mb-4">
   <dt class="col-sm-3">Reference #</dt><dd class="col-sm-9"><code>{{ project.reference_number }}</code></dd>
-  <dt class="col-sm-3">Client</dt><dd class="col-sm-9">{{ project.client_name }}</dd>
-  <dt class="col-sm-3">Contract (excl.)</dt><dd class="col-sm-9">{{ project.contract_value_excl_vat|default:"—" }}</dd>
-  <dt class="col-sm-3">VAT 15%</dt><dd class="col-sm-9">{{ project.vat_15|default:"—" }}</dd>
-  <dt class="col-sm-3">Contract (incl.)</dt><dd class="col-sm-9">{{ project.contract_incl_vat|default:"—" }}</dd>
-  <dt class="col-sm-3">Client advance</dt>
+  <dt class="col-sm-3">Client Name</dt><dd class="col-sm-9">{{ project.client_name }}</dd>
+  <dt class="col-sm-3">Contract Value (Excl. VAT)</dt><dd class="col-sm-9">{{ project.contract_value_excl_vat|sar }}</dd>
+  <dt class="col-sm-3">VAT 15%</dt><dd class="col-sm-9">{{ project.vat_15|sar }}</dd>
+  <dt class="col-sm-3">Contract Incl. VAT</dt><dd class="col-sm-9">{{ project.contract_incl_vat|sar }}</dd>
+  <dt class="col-sm-3">Client advance (incl. VAT)</dt>
   <dd class="col-sm-9">
     {% if project.advance_amount_incl_vat is not None %}
       {{ project.client_advance_display }}
       {% if project.advance_percent_of_contract %}
-      <span class="text-muted small">({{ project.advance_percent_of_contract }}% of contract incl. VAT)</span>
+      <span class="text-muted small">({{ project.advance_percent_of_contract|num }}% of contract incl. VAT)</span>
       {% endif %}
     {% else %}
       —
     {% endif %}
   </dd>
-  <dt class="col-sm-3">Total income (Paid IN)</dt><dd class="col-sm-9">{{ total_income_paid }}</dd>
-  <dt class="col-sm-3">Total expense (OUT)</dt><dd class="col-sm-9">{{ total_expense }}</dd>
-  <dt class="col-sm-3">Net profit / loss</dt><dd class="col-sm-9">{{ net_profit|default:"—" }}</dd>
-  <dt class="col-sm-3">Remaining (incl. − paid income)</dt><dd class="col-sm-9">{{ remaining_display|default:"—" }}</dd>
+  <dt class="col-sm-3">Total Income</dt><dd class="col-sm-9">{{ total_income_paid|default:0|sar }}</dd>
+  <dt class="col-sm-3">Total Expense</dt><dd class="col-sm-9">{{ total_expense|default:0|sar }}</dd>
+  <dt class="col-sm-3">Net Profit / Loss</dt><dd class="col-sm-9">{{ net_profit|sar }}</dd>
+  <dt class="col-sm-3">Remaining Amount</dt><dd class="col-sm-9">{{ remaining_display|sar }}</dd>
   <dt class="col-sm-3">Notes</dt><dd class="col-sm-9">{{ project.notes|default:"—"|linebreaks }}</dd>
 </dl>
 
@@ -43,16 +43,16 @@
 <div class="te-table-card">
   <div class="table-responsive">
     <table class="table table-sm mb-0 align-middle">
-      <thead><tr><th>Ref #</th><th>Date</th><th>Type</th><th>Excl.</th><th>Total</th><th>Category</th></tr></thead>
+      <thead><tr><th>Date</th><th>Type (IN/OUT)</th><th>Amount (Excl. VAT)</th><th>Total Amount</th><th>Category</th><th></th></tr></thead>
       <tbody>
         {% for t in transactions %}
         <tr>
-          <td><a href="{% url 'transactions:detail_by_ref' t.reference_number %}"><code class="small">{{ t.reference_number }}</code></a></td>
           <td>{{ t.date }}</td>
           <td>{% include "partials/flow_badge.html" with flow=t.flow_type %}</td>
-          <td>{{ t.amount_excl_vat }}</td>
-          <td>{{ t.total_amount }}</td>
+          <td>{{ t.amount_excl_vat|sar }}</td>
+          <td>{{ t.total_amount|sar }}</td>
           <td>{{ t.category }}</td>
+          <td><a class="btn btn-sm te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a></td>
         </tr>
         {% endfor %}
       </tbody>

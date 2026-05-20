@@ -1,6 +1,10 @@
+import json
+
 from django.db.models import Count, F, Q, Sum
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
@@ -11,6 +15,7 @@ from accounts.mixins import (
     ViewerReadOnlyMixin,
 )
 
+from .category_utils import ensure_category_exists, normalize_category_name
 from .forms import LegacyPayableForm, TransactionForm
 from .models import LegacyPayable, Transaction
 
@@ -33,6 +38,7 @@ class TransactionListView(ViewerReadOnlyMixin, ListView):
         if q:
             qs = qs.filter(
                 Q(reference_number__icontains=q)
+                | Q(project__reference_number__icontains=q)
                 | Q(description__icontains=q)
                 | Q(party_name__icontains=q)
                 | Q(notes__icontains=q)
@@ -83,16 +89,28 @@ class TransactionDetailView(SessionAuthenticatedMixin, DetailView):
         )
 
 
+class CategoryCreateView(AdminOrAccountantMixin, View):
+    """Persist a new category name (AJAX from transaction form)."""
+
+    def post(self, request, *args, **kwargs):
+        try:
+            payload = json.loads(request.body.decode("utf-8") or "{}")
+        except json.JSONDecodeError:
+            payload = {}
+        name = normalize_category_name(payload.get("name") or request.POST.get("name"))
+        if not name:
+            return JsonResponse({"ok": False, "error": "Category name is required."}, status=400)
+        ensure_category_exists(name)
+        return JsonResponse({"ok": True, "name": name})
+
+
 class TransactionCreateView(AdminOrAccountantMixin, CreateView):
     model = Transaction
     form_class = TransactionForm
     template_name = "transactions/transaction_form.html"
 
     def get_success_url(self):
-        return reverse_lazy(
-            "transactions:detail_by_ref",
-            kwargs={"reference_number": self.object.reference_number},
-        )
+        return reverse_lazy("transactions:detail", kwargs={"pk": self.object.pk})
 
 
 class TransactionUpdateView(AdminOrAccountantMixin, UpdateView):
@@ -104,10 +122,7 @@ class TransactionUpdateView(AdminOrAccountantMixin, UpdateView):
         return Transaction.objects.select_related("project")
 
     def get_success_url(self):
-        return reverse_lazy(
-            "transactions:detail_by_ref",
-            kwargs={"reference_number": self.object.reference_number},
-        )
+        return reverse_lazy("transactions:detail", kwargs={"pk": self.object.pk})
 
 
 class TransactionDeleteView(AdminOrAccountantMixin, DeleteView):

@@ -17,11 +17,13 @@ class ProjectForm(forms.ModelForm):
         labels = {
             "reference_number": "Reference #",
             "name": "Project Name",
-            "advance_amount_incl_vat": "Client advance (incl. VAT, optional)",
+            "client_name": "Client Name",
+            "contract_value_excl_vat": "Contract Value (Excl. VAT)",
+            "advance_amount_incl_vat": "Client advance (incl. VAT)",
         }
         help_texts = {
             "advance_amount_incl_vat": (
-                "Enter amount received from client. % of contract is calculated automatically."
+                "Optional. Amount received from client (incl. VAT). % of contract is calculated automatically."
             ),
         }
         widgets = {

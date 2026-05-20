@@ -8,6 +8,7 @@ from projects.models import Project
 from .category_utils import (
     ADD_CATEGORY_VALUE,
     category_field_choices,
+    ensure_category_exists,
     normalize_category_name,
 )
 from .models import LegacyPayable, Transaction
@@ -43,7 +44,7 @@ class TransactionForm(forms.ModelForm):
         ]
         labels = {
             "qty": "Quantity",
-            "rate": "Per Unit Price",
+            "rate": "Per Unit Price (Excl & Incl)",
         }
         widgets = {
             "date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
@@ -65,7 +66,8 @@ class TransactionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        projects = Project.objects.order_by("reference_number")
+        # Newest projects first so recently added refs (e.g. ss3486) are easy to find
+        projects = Project.objects.order_by("-pk")
         self.fields["project_reference"].queryset = projects
         self.fields["project"].queryset = projects
         self.fields["project"].label = "Project Name"
@@ -85,10 +87,16 @@ class TransactionForm(forms.ModelForm):
             self.fields["project"].initial = self.instance.project_id
 
         category_choices = category_field_choices()
+        existing = {value for value, _ in category_choices if value}
         if self.instance.pk and self.instance.category:
-            existing = {value for value, _ in category_choices if value}
             if self.instance.category not in existing:
                 category_choices.append((self.instance.category, self.instance.category))
+                existing.add(self.instance.category)
+        posted_category = ""
+        if self.data:
+            posted_category = normalize_category_name(self.data.get("category"))
+        if posted_category and posted_category not in existing:
+            category_choices.append((posted_category, posted_category))
         self.fields["category"] = forms.ChoiceField(
             choices=category_choices,
             required=True,
@@ -159,7 +167,7 @@ class TransactionForm(forms.ModelForm):
         elif not category:
             self.add_error("category", "Category is required.")
         else:
-            cleaned["category"] = normalize_category_name(category)
+            cleaned["category"] = ensure_category_exists(category)
 
         return cleaned
 
@@ -175,11 +183,9 @@ class TransactionForm(forms.ModelForm):
 
         if commit:
             instance.save()
-            if creating:
-                canonical = f"TXN-{instance.pk:06d}"
-                if instance.reference_number != canonical:
-                    instance.reference_number = canonical
-                    instance.save(update_fields=["reference_number"])
+            if creating and instance.reference_number.startswith("TXN-TMP-"):
+                instance.reference_number = f"TXN-{instance.pk:06d}"
+                instance.save(update_fields=["reference_number"])
         return instance
 
 

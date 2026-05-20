@@ -55,7 +55,7 @@
         <h1 class="te-topbar-title text-truncate mb-0 flex-grow-1 min-w-0">{% block header_title %}Dashboard{% endblock %}</h1>
         {% if user.is_authenticated %}
         <div class="te-topbar-actions flex-shrink-0">
-          <span class="te-topbar-email d-none d-lg-inline">{{ user.email }}</span>
+          <span class="te-topbar-user d-none d-lg-inline">{{ user.display_name }}</span>
           {% if user.role == 'admin' %}
           <span class="badge rounded-pill badge-role-admin">{{ user.get_role_display }}</span>
           {% elif user.role == 'accountant' %}

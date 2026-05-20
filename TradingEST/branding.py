@@ -1,5 +1,6 @@
 """Company branding — single source of truth for templates."""
 
-BRAND_NAME_AR = "مؤسسة المستقبل المردهر التجارية"
-BRAND_NAME_EN = "PROSPEROUS FUTURE TRADING EST"
+# مزدهر = prosperous (ز has the distinguishing dot; matches English "Future")
+BRAND_NAME_AR = "المستقبل المزدهر التجارية"
+BRAND_NAME_EN = "PROSPEROUS FUTURE EST"
 BRAND_TAGLINE = "Powering Industries with Precision & Reliability"

@@ -23,14 +23,22 @@ class ProjectListView(ViewerReadOnlyMixin, ListView):
     def get_queryset(self):
         qs = (
             Project.objects.annotate(
-                total_income_paid=Sum(
-                    "transactions__total_amount",
-                    filter=Q(transactions__flow_type=FlowType.IN)
-                    & paid_status_q("transactions__"),
+                total_income_paid=Coalesce(
+                    Sum(
+                        "transactions__total_amount",
+                        filter=Q(transactions__flow_type=FlowType.IN)
+                        & paid_status_q("transactions__"),
+                    ),
+                    Value(Decimal("0")),
+                    output_field=DecimalField(max_digits=18, decimal_places=2),
                 ),
-                total_expense=Sum(
-                    "transactions__total_amount",
-                    filter=Q(transactions__flow_type=FlowType.OUT),
+                total_expense=Coalesce(
+                    Sum(
+                        "transactions__total_amount",
+                        filter=Q(transactions__flow_type=FlowType.OUT),
+                    ),
+                    Value(Decimal("0")),
+                    output_field=DecimalField(max_digits=18, decimal_places=2),
                 ),
             )
             .annotate(
