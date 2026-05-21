@@ -1141,12 +1141,18 @@ body.te-sidebar-open .te-sidebar-backdrop {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-weight: 600;
-  color: var(--te-gray-600);
+  font-weight: 700;
+  color: var(--te-primary);
   background: var(--te-gray-50);
   border: none;
   border-bottom: 1px solid var(--te-border);
   padding: 0.85rem 1rem;
+}
+
+/* Bootstrap table-light inside te-table-card (e.g. tax report) */
+.te-table-card .table-light th {
+  color: var(--te-primary);
+  font-weight: 700;
 }
 
 .te-table-card tbody th,
