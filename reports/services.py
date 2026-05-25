@@ -51,6 +51,13 @@ def _sum_tax_amount(qs):
     return v if v is not None else Decimal("0")
 
 
+def has_vat_q(prefix: str = "") -> Q:
+    """Tax % or Tax Amount > 0 (exclude 0% from tax report purchase totals)."""
+    tax_amt = f"{prefix}tax_amount__gt"
+    tax_pct = f"{prefix}tax_percent__gt"
+    return Q(**{tax_amt: 0}) | Q(**{tax_pct: 0})
+
+
 def accounts_summary_rows():
     """
     Rows match Accounts_Summary sheet — VAT-inclusive (P) for Cash/Bank/Owner Contribution;
@@ -149,8 +156,8 @@ def month_display_name(year: int, month: int) -> str:
 def tax_report_for_month(year: int, month: int) -> dict:
     """
     Tax Report — Business-Logic §3 Tax Report + rule 10–12.
-    Sales: IN, Client (case-insensitive), Paid only (excludes Partially Paid).
-    Purchases: OUT, Cash, date in month.
+    Sales: IN, Client, Paid (Output VAT = sum Tax Amount).
+    Purchases: OUT, Cash with VAT only in Total Purchases (0% lines excluded).
     """
     start, end_exc = month_bounds(year, month)
     base = Transaction.objects.filter(date__gte=start, date__lt=end_exc)
@@ -166,9 +173,9 @@ def tax_report_for_month(year: int, month: int) -> dict:
     output_vat = _sum_tax_amount(sales_base)
 
     purch_q = Q(flow_type=FlowType.OUT) & Q(account__iexact="cash")
-    purch_base = base.filter(purch_q)
-    total_purchases_excl = _sum_amount_excl(purch_base)
-    input_vat = _sum_tax_amount(purch_base)
+    purch_vatable = base.filter(purch_q).filter(has_vat_q())
+    total_purchases_excl = _sum_amount_excl(purch_vatable)
+    input_vat = _sum_tax_amount(purch_vatable)
 
     if total_sales_excl == Decimal("0") and total_purchases_excl == Decimal("0"):
         net_vat = None

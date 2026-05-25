@@ -1423,7 +1423,8 @@ body.te-sidebar-open .te-sidebar-backdrop {
   padding: 1.5rem 1.5rem 0.5rem;
 }
 
-.te-dl-card dt {
+.te-dl-card dt,
+.te-tx-form-label {
   color: var(--te-muted);
   font-size: 0.75rem;
   font-weight: 600;

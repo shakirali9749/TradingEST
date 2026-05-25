@@ -15,13 +15,14 @@
   <div class="table-responsive">
     <table class="table mb-0 align-middle">
       <thead>
-        <tr><th>Suppliars Names</th><th>Total payable</th><th>Total paid</th><th>Total Remain after Paid</th><th>Projects Name</th><th>Note</th><th></th></tr>
+        <tr><th>Suppliars Names</th><th>Total payable</th><th>Paid date</th><th>Total paid</th><th>Total Remain after Paid</th><th>Projects Name</th><th>Note</th><th></th></tr>
       </thead>
       <tbody>
         {% for row in legacy_rows %}
         <tr>
           <td class="fw-medium">{{ row.supplier_name }}</td>
           <td>{{ row.total_payable|sar }}</td>
+          <td>{% if row.date_last_paid %}{{ row.date_last_paid|date:"j M Y" }}{% else %}—{% endif %}</td>
           <td>{{ row.total_paid|sar }}</td>
           <td><strong class="text-primary">{{ row.remaining_calc|sar }}</strong></td>
           <td>{{ row.projects_name }}</td>

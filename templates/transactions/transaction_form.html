@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load te_labels %}
 {% block title %}{% if object %}Edit{% else %}New{% endif %} transaction · {{ brand_name_en }}{% endblock %}
 {% block header_title %}{% if object %}Edit transaction{% else %}New transaction{% endif %}{% endblock %}
 
@@ -12,7 +13,7 @@
     <div class="row g-3">
       {% for field in form %}
       <div class="col-md-6{% if field.name == 'category' %} col-12{% endif %}{% if field.name == 'project_reference' or field.name == 'project' %} te-linked-project-field{% endif %}">
-        <label class="form-label fw-semibold small text-muted" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <label class="form-label te-tx-form-label fw-semibold small text-muted" for="{{ field.id_for_label }}">{{ field.name|tx_label }}</label>
         {% if field.name == 'category' %}
         <div class="input-group te-category-input-group flex-nowrap">
           {{ field }}

@@ -58,11 +58,11 @@
         {% include "partials/payment_badge.html" with status=t.payment_status %}
       </div>
       <div class="te-tx-card__amount">{{ t.total_amount|default:t.amount_excl_vat|sar }}</div>
-      <p class="small mb-1"><strong>Amount (Excl. VAT)</strong> {{ t.amount_excl_vat|sar }} · <strong>Tax Amount</strong> {{ t.tax_amount|sar }}</p>
-      <p class="small mb-1"><strong>Account</strong> {{ t.account }}</p>
-      <p class="small mb-1"><strong>Category</strong> {{ t.category }}</p>
-      {% if t.party_name %}<p class="small mb-1"><strong>Party Name</strong> {{ t.party_name }}</p>{% endif %}
-      {% if t.project %}<p class="small mb-0"><strong>Project Name</strong> {{ t.project.name }}</p>{% endif %}
+      <p class="small mb-1"><strong>{{ labels.amount_excl_vat }}</strong> {{ t.amount_excl_vat|sar }} · <strong>{{ labels.tax_amount }}</strong> {{ t.tax_amount|sar }}</p>
+      <p class="small mb-1"><strong>{{ labels.account }}</strong> {{ t.account }}</p>
+      <p class="small mb-1"><strong>{{ labels.category }}</strong> {{ t.category }}</p>
+      {% if t.party_name %}<p class="small mb-1"><strong>{{ labels.party_name }}</strong> {{ t.party_name }}</p>{% endif %}
+      {% if t.project %}<p class="small mb-0"><strong>{{ labels.project }}</strong> {{ t.project.name }}</p>{% endif %}
       <div class="te-tx-card__actions">
         <a class="btn te-btn-secondary" href="{% url 'transactions:detail' t.pk %}">View</a>
         {% if user.role == 'admin' or user.role == 'accountant' %}
@@ -81,17 +81,17 @@
     <table class="table table-sm mb-0 align-middle">
       <thead>
         <tr>
-          <th>Reference #</th>
-          <th>Date</th>
-          <th>Type (IN/OUT)</th>
-          <th>Payment Status</th>
-          <th>Amount (Excl. VAT)</th>
-          <th>Tax Amount</th>
-          <th>Total Amount</th>
-          <th>Account</th>
-          <th>Category</th>
-          <th>Project Name</th>
-          <th>Party Name</th>
+          <th>{{ labels.project_reference }}</th>
+          <th>{{ labels.date }}</th>
+          <th>{{ labels.flow_type }}</th>
+          <th>{{ labels.payment_status }}</th>
+          <th>{{ labels.amount_excl_vat }}</th>
+          <th>{{ labels.tax_amount }}</th>
+          <th>{{ labels.total_amount }}</th>
+          <th>{{ labels.account }}</th>
+          <th>{{ labels.category }}</th>
+          <th>{{ labels.project }}</th>
+          <th>{{ labels.party_name }}</th>
           <th></th>
         </tr>
       </thead>

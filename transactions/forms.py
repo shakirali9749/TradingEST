@@ -11,6 +11,7 @@ from .category_utils import (
     ensure_category_exists,
     normalize_category_name,
 )
+from .display_labels import apply_transaction_field_labels
 from .models import LegacyPayable, Transaction
 
 
@@ -42,10 +43,6 @@ class TransactionForm(forms.ModelForm):
             "payment_status",
             "notes",
         ]
-        labels = {
-            "qty": "Quantity",
-            "rate": "Per Unit Price (Excl & Incl)",
-        }
         widgets = {
             "date": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "description": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
@@ -70,7 +67,6 @@ class TransactionForm(forms.ModelForm):
         projects = Project.objects.order_by("-pk")
         self.fields["project_reference"].queryset = projects
         self.fields["project"].queryset = projects
-        self.fields["project"].label = "Project Name"
         self.fields["project_reference"].label_from_instance = lambda obj: obj.reference_number
         self.fields["project"].label_from_instance = lambda obj: obj.name
         self.fields["project"].required = False
@@ -125,6 +121,7 @@ class TransactionForm(forms.ModelForm):
                 "notes",
             ]
         )
+        apply_transaction_field_labels(self)
 
     def clean(self):
         cleaned = super().clean()
@@ -195,11 +192,14 @@ class LegacyPayableForm(forms.ModelForm):
         fields = [
             "supplier_name",
             "total_payable",
-            "total_paid",
             "date_last_paid",
+            "total_paid",
             "projects_name",
             "status_note",
         ]
+        labels = {
+            "date_last_paid": "Paid date",
+        }
         widgets = {
             "supplier_name": forms.TextInput(attrs={"class": "form-control"}),
             "total_payable": forms.NumberInput(attrs={"class": "form-control", "step": "0.01"}),

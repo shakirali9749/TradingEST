@@ -67,6 +67,9 @@ class TransactionListView(ViewerReadOnlyMixin, ListView):
             .annotate(lines=Count("id"), sum_excl=Sum("amount_excl_vat"))
             .order_by("account")
         )
+        from .display_labels import transaction_field_labels
+
+        ctx["labels"] = transaction_field_labels()
         return ctx
 
 
@@ -74,6 +77,13 @@ class TransactionDetailView(SessionAuthenticatedMixin, DetailView):
     model = Transaction
     template_name = "transactions/transaction_detail.html"
     context_object_name = "transaction"
+
+    def get_context_data(self, **kwargs):
+        from .display_labels import transaction_field_labels
+
+        ctx = super().get_context_data(**kwargs)
+        ctx["labels"] = transaction_field_labels()
+        return ctx
 
     def get_object(self, queryset=None):
         if queryset is None:
